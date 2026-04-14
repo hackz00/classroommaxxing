@@ -7,9 +7,9 @@
 </p>
 
 <p align="center">
-  really tuff simple game website, with no ads! supports recently played games and 1k+ games from LuminSDK.
+  really tuff simple game website, with no ads! supports recently played games and 1k+ games from LuminSDK
 </p>
 
 <p align="center">
-  <sub><i>Free to host and make links.</i></sub>
+  <sub><i>Free to host and make links</i></sub>
 </p>
