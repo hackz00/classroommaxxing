@@ -1,381 +1,420 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
-    <title>classroommaxxing</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1.0" />
+<title>classroommaxxing</title>
 
-    <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/hackz00/classroommaxxing/main/favicon.png" />
+<link rel="icon" type="image/png" href="https://raw.githubusercontent.com/hackz00/classroommaxxing/main/favicon.png" />
 
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&display=swap"
-        rel="stylesheet">
-    <style>
-        :root {
-            --bg: #111214;
-            --panel: #17181b;
-            --line: #26292d;
-            --text: #eceeef;
-            --muted: #a1a7ae
-        }
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 
-        * {
-            box-sizing: border-box
-        }
+<style>
+:root {
+    --bg:#111214;
+    --panel:#17181b;
+    --line:#26292d;
+    --text:#eceeef;
+    --muted:#a1a7ae
+}
+*{box-sizing:border-box}
 
-        html,
-        body {
-            margin: 0;
-            min-height: 100%;
-            background: linear-gradient(to right, rgba(255, 255, 255, .045) 1px, transparent 1px), linear-gradient(to bottom, rgba(255, 255, 255, .045) 1px, transparent 1px), linear-gradient(180deg, #121315 0%, #0f1012 100%);
-            background-size: 28px 28px, 28px 28px, auto;
-            background-attachment: fixed;
-            font-family: 'IBM Plex Sans', sans-serif;
-            color: var(--text)
-        }
+html,body{
+margin:0;
+min-height:100%;
+background:
+linear-gradient(to right,rgba(255,255,255,.045)1px,transparent 1px),
+linear-gradient(to bottom,rgba(255,255,255,.045)1px,transparent 1px),
+linear-gradient(180deg,#121315 0%,#0f1012 100%);
+background-size:28px 28px,28px 28px,auto;
+background-attachment:fixed;
+font-family:'IBM Plex Sans',sans-serif;
+color:var(--text)
+}
 
-        header {
-            padding: 14px 16px;
-            border-bottom: 1px solid #24272b;
-            position: sticky;
-            top: 0;
-            background: rgba(17, 18, 20, .92);
-            backdrop-filter: blur(10px);
-            z-index: 10
-        }
+header{
+padding:14px 16px;
+border-bottom:1px solid #24272b;
+position:sticky;
+top:0;
+background:rgba(17,18,20,.92);
+backdrop-filter:blur(10px);
+z-index:10
+}
 
-        h1 {
-            margin: 0;
-            font-size: 28px;
-            font-weight: 700;
-            text-transform: lowercase;
-            letter-spacing: -.02em
-        }
+h1{
+margin:0;
+font-size:28px;
+font-weight:700;
+text-transform:lowercase;
+letter-spacing:-.02em
+}
 
-        main {
-            padding: 10px
-        }
+main{padding:10px}
 
-        #search {
-            width: 100%;
-            height: 40px;
-            border-radius: 10px;
-            border: 1px solid #2b2e33;
-            background: #141518;
-            color: var(--text);
-            padding: 0 14px;
-            font: inherit;
-            margin-bottom: 6px
-        }
+.searchWrap{
+position:relative;
+}
 
-        #recentHead {
-            display: none;
-            align-items: center;
-            justify-content: space-between;
-            gap: 10px;
-            margin: 4px 6px 2px
-        }
+#search{
+width:100%;
+height:40px;
+border-radius:10px;
+border:1px solid #2b2e33;
+background:#141518;
+color:var(--text);
+padding:0 40px 0 14px;
+font:inherit;
+margin-bottom:6px
+}
 
-        #recentTitle {
-            font-size: 14px;
-            font-weight: 600
-        }
+#clearSearch{
+position:absolute;
+right:10px;
+top:calc(50% - 2.7px);
+transform:translateY(-50%);
+width:22px;
+height:22px;
+border:0;
+border-radius:999px;
+background:transparent;
+color:#9aa0a6;
+cursor:pointer;
+user-select:none;
+display:none;
+align-items:center;
+justify-content:center;
+font-size:20px;
+line-height:1;
+padding:0;
+}
 
-        #randomGame {
-            font-size: 14px;
-            font-weight: 700;
-            text-decoration: underline;
-            cursor: pointer;
-            color: var(--text);
-            user-select: none
-        }
+#clearSearch:hover{
+color:#fff;
+background:rgba(255,255,255,.06);
+}
 
-        #recent {
-            display: flex;
-            gap: 8px;
-            overflow-x: auto;
-            margin-bottom: 12px
-        }
+#recentHead{
+display:none;
+align-items:center;
+justify-content:space-between;
+gap:10px;
+margin:4px 6px 2px
+}
 
-        #recent button {
-            background: #17181b;
-            border: 1px solid #2a2d31;
-            color: #ddd;
-            padding: 6px 10px;
-            border-radius: 999px;
-            cursor: pointer;
-            flex: 0 0 auto
-        }
+#recentTitle{font-size:14px;font-weight:600}
 
-        #grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(112px, 1fr));
-            gap: 7px;
-            margin-top: 4px
-        }
+#randomGame{
+font-size:14px;
+font-weight:700;
+text-decoration:underline;
+cursor:pointer;
+color:var(--text);
+user-select:none
+}
 
-        .card {
-            background: #17181b;
-            border: 1px solid #2a2d31;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: .12s;
-            overflow: hidden
-        }
+#recent{
+display:flex;
+gap:8px;
+overflow-x:auto;
+margin-bottom:12px
+}
 
-        .card:hover {
-            border-color: #444;
-            transform: translateY(-2px)
-        }
+#recent button{
+background:#17181b;
+border:1px solid #2a2d31;
+color:#ddd;
+padding:6px 10px;
+border-radius:999px;
+cursor:pointer;
+flex:0 0 auto
+}
 
-        .card.clicked {
-            animation: pop .2s ease
-        }
+#grid{
+display:grid;
+grid-template-columns:repeat(auto-fill,minmax(112px,1fr));
+gap:7px;
+margin-top:4px
+}
 
-        @keyframes pop {
-            0% {
-                transform: scale(1)
-            }
+.card{
+background:#17181b;
+border:1px solid #2a2d31;
+border-radius:8px;
+cursor:pointer;
+transition:transform .18s ease, box-shadow .18s ease, border-color .18s;
+overflow:hidden;
+}
 
-            50% {
-                transform: scale(.96)
-            }
+.card:hover{
+border-color:#555;
+transform:translateY(-4px) scale(1.03);
+box-shadow:0 8px 18px rgba(0,0,0,.35);
+}
 
-            100% {
-                transform: scale(1)
-            }
-        }
+.card.clicked{animation:pop .2s ease}
 
-        .card img {
-            width: 100%;
-            aspect-ratio: 1/1;
-            object-fit: cover
-        }
+@keyframes pop{
+0%{transform:scale(1)}
+50%{transform:scale(.96)}
+100%{transform:scale(1)}
+}
 
-        .card span {
-            display: block;
-            padding: 6px;
-            font-size: 12px;
-            color: #c2c7cd;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis
-        }
+.card img{
+width:100%;
+aspect-ratio:1/1;
+object-fit:cover
+}
 
-        #loader {
-            padding: 12px;
-            text-align: center;
-            color: #888;
-            font-size: 12px
-        }
+.card span{
+display:block;
+padding:6px;
+font-size:12px;
+color:#c2c7cd;
+white-space:nowrap;
+overflow:hidden;
+text-overflow:ellipsis
+}
 
-        #backUp {
-            position: fixed;
-            left: 50%;
-            bottom: 14px;
-            margin-left: -60px;
-            width: 120px;
-            display: none;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            padding: 10px 12px;
-            border-radius: 999px;
-            border: 1px solid #2a2d31;
-            background: #17181b;
-            color: #ddd;
-            cursor: pointer;
-            box-shadow: 0 10px 24px rgba(0, 0, 0, .28);
-            z-index: 20;
-            font: inherit;
-            transition: border-color .12s
-        }
+#loader{
+padding:12px;
+text-align:center;
+color:#888;
+font-size:12px
+}
 
-        #backUp .arrow {
-            font-size: 16px;
-            line-height: 1
-        }
+#backUp{
+position:fixed;
+left:50%;
+bottom:14px;
+margin-left:-60px;
+width:120px;
+display:none;
+align-items:center;
+justify-content:center;
+gap:8px;
+padding:10px 12px;
+border-radius:999px;
+border:1px solid #2a2d31;
+background:#17181b;
+color:#ddd;
+cursor:pointer;
+box-shadow:0 10px 24px rgba(0,0,0,.28);
+z-index:20;
+font:inherit;
+transition:border-color .12s
+}
 
-        #backUp:hover {
-            border-color: #444
-        }
-    </style>
+#backUp .arrow{font-size:16px;line-height:1}
+#backUp:hover{border-color:#444}
+</style>
 </head>
 
 <body>
-    <header style="display:flex;align-items:center;justify-content:space-between;">
-        <h1 id="siteTitle">classroommaxxing</h1>
-        <div id="slogan" style="font-size:13px;color:#9ca2a8;margin-left:auto"></div>
-    </header>
-    <main>
+<header style="display:flex;align-items:center;justify-content:space-between;">
+    <h1 id="siteTitle">classroommaxxing</h1>
+    <div id="slogan" style="font-size:13px;color:#9ca2a8;margin-left:auto"></div>
+</header>
+
+<main>
+    <div class="searchWrap">
         <input id="search" placeholder="Search games" />
-        <div id="recentHead">
-            <div id="recentTitle">recently played</div>
-            <div>
-                <div id="randomGame">random game</div>
-                <div style="font-size:12px;color:#9ca2a8;margin-top:2px">made by hackz!</div>
-            </div>
+        <button id="clearSearch" type="button" aria-label="Clear search">×</button>
+    </div>
+
+    <div id="recentHead">
+        <div id="recentTitle">recently played</div>
+        <div>
+            <div id="randomGame">random game</div>
+            <div style="font-size:12px;color:#9ca2a8;margin-top:2px">made by hackz!</div>
         </div>
-        <div id="recent"></div>
-        <div id="grid"></div>
-        <div id="loader">loading…</div>
-    </main>
-    <button id="backUp" type="button"><span class="arrow">↑</span><span>Back Up</span></button>
-    <script src="https://cdn.jsdelivr.net/gh/luminsdk/script@latest/lumin.min.js"></script>
-    <script>
-        let page = 1, loading = false, done = false, searchMode = false, searchQuery = '';
-        let allGames = [], recent = JSON.parse(localStorage.getItem('recent') || '[]');
-        const grid = document.getElementById('grid');
-        const loader = document.getElementById('loader');
-        const recentBox = document.getElementById('recent');
-        const recentHead = document.getElementById('recentHead');
-        const search = document.getElementById('search');
-        const backUp = document.getElementById('backUp');
-        const randomGame = document.getElementById('randomGame');
-        const siteTitle = document.getElementById('siteTitle');
-        const slogan = document.getElementById('slogan');
-        const slogans = ["unlimited games but no games ahhh", "its free guys!!", "made by a human being maybe", "also try waves!!", "????????????????", "games get auto added btw", "àáâãäåāăą", "add text here", "probably not blocked", "100% organic free range games", "update after gta 7", "thank you LuminSDK", "there is no burger", "causes cancer in california", "NO ADS GUYS", "created on Monday, April 13, 2026, 8:36 PM EST", "0o0o0o0o00o0o0o0000o", "also check out fmhy.net!!", "you would never play games at school right...", "keyboard warrior website right here", "25°23′17″N 61°08′23″E", "made in html", "ß ß ß ß ß ß ß ß ß ß", "dont get the site blocked guys :(", "Commas go before 'but' in compound sentences.", "games games games games games games", "alt+tab guys", "you might just have a skill issue", "not responsible for your loss of time", "check your GPA", "wifi not included but required", "seen on tv (no)", "patent pending on something", "probably prohibited by school policy", "łľĺļŀ", "Zzžźż", "₩₪₫€₭₮₯₰₱", "①②③④⑤⑥⑦⑧⑨⑩", "▲▲▲▲▲▲▲▲▲▲", "you can share but not really", "7on3xFRMhj1KYSgqCt1AjV5YS4xzzCsVmGoBcTs9wAw2", "no text here", "idk what else to write here", "lowkey < midkey < highkey", "NaN-inf", "not supported by indians", "tuff in india", "scandoulus activity right here", "there are like 50 of these", "just go play a game >:(", "2026-2026", "d1 lightspeed hater right here", "WE HAVE BALATRO", "an entwine'd website", "n0 n0 n0 n0 n0", "use CachyOS!!", "We abstained yet abhorred the abysmal, abstruse imitate prophecy", "yada yada yada", "1% chance to get classroommaxxinggg btw", "GET BACK TO WORK!", "we dont have fortnite no", "make sure to show your teachers (dont)", "better than epstein (maybe)", "why are we playing games on our school chromebooks", "dont break school policy guys i told you!!", "goon_max_rizz_god_mango67", "this is peak right", "big E affiliated", "i hate when i snigger", "NOT backed by isreal (yet)", "we are not responsible for any consequences of using this site", "probably shouldnt use this site", "dont get caught guys!!", "definitely dont use this at school", "use at your own risk", "WHAT THE FUCK IS A SHOWER", "coooookie clickeeeeeerrr", "roblox maybe?", "palm beach pete here", "maybe nuke france", "make your own links to the site!!", "@@@@@@@@@@@@@@@@@@@@", "blue bands blue bands blue bands"];
-        slogan.textContent = slogans[Math.floor(Math.random() * slogans.length)];
+    </div>
 
-        function setEasterEggTitle() {
-            const r = Math.random();
-            if (r < 0.01) siteTitle.textContent = 'classroommaxxinggg';
-            else if (r < 0.11) siteTitle.textContent = 'classroommaxxingg';
-            else siteTitle.textContent = 'classroommaxxing';
-        }
+    <div id="recent"></div>
+    <div id="grid"></div>
+    <div id="loader">loading…</div>
+</main>
 
-        function renderRecent() {
-            recent = recent.slice(0, 5);
-            localStorage.setItem('recent', JSON.stringify(recent));
-            recentHead.style.display = recent.length ? 'flex' : 'none';
-            recentBox.innerHTML = '';
-            recent.forEach(r => {
-                const b = document.createElement('button');
-                b.textContent = r.name;
-                b.onclick = () => Lumin.loadGame(r.id);
-                recentBox.appendChild(b);
-            });
-        }
+<button id="backUp"><span class="arrow">↑</span><span>Back Up</span></button>
 
-        function addRecent(g) {
-            recent = recent.filter(x => x.id !== g.id);
-            recent.unshift(g);
-            recent = recent.slice(0, 5);
-            localStorage.setItem('recent', JSON.stringify(recent));
-            renderRecent();
-        }
+<script src="https://cdn.jsdelivr.net/gh/luminsdk/script@latest/lumin.min.js"></script>
+<script>
+let page=1,loading=false,done=false,searchMode=false,searchQuery='';
+let allGames=[],recent=JSON.parse(localStorage.getItem('recent')||'[]');
 
-        function esc(s) { return String(s).replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;').replaceAll('"', '&quot;').replaceAll("'", '&#39;') }
+const grid=document.getElementById('grid');
+const loader=document.getElementById('loader');
+const recentBox=document.getElementById('recent');
+const recentHead=document.getElementById('recentHead');
+const search=document.getElementById('search');
+const clearSearch=document.getElementById('clearSearch');
+const backUp=document.getElementById('backUp');
+const randomGame=document.getElementById('randomGame');
+const siteTitle=document.getElementById('siteTitle');
+const slogan=document.getElementById('slogan');
 
-        function renderGrid(games) {
-            grid.innerHTML = '';
-            games.forEach(g => {
-                const card = document.createElement('div');
-                card.className = 'card';
-                card.innerHTML = `<img src="${g._img}"><span>${esc(g.name)}</span>`;
-                card.onclick = () => {
-                    card.classList.remove('clicked');
-                    void card.offsetWidth;
-                    card.classList.add('clicked');
-                    addRecent(g);
-                    setTimeout(() => Lumin.loadGame(g.id), 120);
-                };
-                grid.appendChild(card);
-            });
-            checkIfNeedMore();
-        }
+const slogans = ["unlimited games but no games ahhh", "its free guys!!", "made by a human being maybe", "also try waves!!", "????????????????", "games get auto added btw", "àáâãäåāăą", "add text here", "probably not blocked", "100% organic free range games", "update after gta 7", "thank you LuminSDK", "there is no burger", "causes cancer in california", "NO ADS GUYS", "created on Monday, April 13, 2026, 8:36 PM EST", "0o0o0o0o00o0o0o0000o", "also check out fmhy.net!!", "you would never play games at school right...", "keyboard warrior website right here", "25°23′17″N 61°08′23″E", "made in html", "ß ß ß ß ß ß ß ß ß ß", "dont get the site blocked guys :(", "Commas go before 'but' in compound sentences.", "games games games games games games", "alt+tab guys", "you might just have a skill issue", "not responsible for your loss of time", "check your GPA", "wifi not included but required", "seen on tv (no)", "patent pending on something", "probably prohibited by school policy", "łľĺļŀ", "Zzžźż", "₩₪₫€₭₮₯₰₱", "①②③④⑤⑥⑦⑧⑨⑩", "▲▲▲▲▲▲▲▲▲▲", "you can share but not really", "7on3xFRMhj1KYSgqCt1AjV5YS4xzzCsVmGoBcTs9wAw2", "no text here", "idk what else to write here", "lowkey < midkey < highkey", "NaN-inf", "not supported by indians", "tuff in india", "scandoulus activity right here", "there are like 50 of these", "just go play a game >:(", "2026-2026", "d1 lightspeed hater right here", "WE HAVE BALATRO", "an entwine'd website", "n0 n0 n0 n0 n0", "use CachyOS!!", "We abstained yet abhorred the abysmal, abstruse imitate prophecy", "yada yada yada", "1% chance to get classroommaxxinggg btw", "GET BACK TO WORK!", "we dont have real fortnite no", "make sure to show your teachers (dont)", "better than epstein (maybe)", "why are we playing games on our school chromebooks", "dont break school policy guys i told you!!", "goon_max_rizz_god_mango67", "this is peak right", "big E affiliated", "i hate when i snigger", "NOT backed by isreal (yet)", "we are not responsible for any consequences of using this site", "probably shouldnt use this site", "dont get caught guys!!", "definitely dont use this at school", "use at your own risk", "WHAT THE FUCK IS A SHOWER", "coooookie clickeeeeeerrr", "roblox maybe?", "palm beach pete here", "maybe nuke france", "make your own links to the site!!", "@@@@@@@@@@@@@@@@@@@@", "blue bands blue bands blue bands", "get cracking", "stay hydrated!!", "0.1% chance to get schoolmaxxingggggggg", "moving up down left right over", "press `", "over 1000 games", "no obscurity right here", "lets go gambling", "studious behavior over here", "800815", "!@#$%^&*()", "zxcvbnmasdfghjklqwertyuiop", "also try monkeytype!", "gong bong song wong", "-----patel", "rah rah rah rah", "DONT YOU LECTURE ME", "no diddy (yet)", "epstien clicker SOON", "crazy? i was crazy once", "ツツツツツツツツツ", "¯\_(ツ)_/¯  ¯\_(ツ)_/¯", ">>>>>>>>>>>", "（（（( )）））", "balllright", "maybachhh musicc", "this is a game website btw", "yYyyYyyYYyYyYYYyy", "."];
+slogan.textContent = slogans[Math.floor(Math.random() * slogans.length)];
 
-        function checkIfNeedMore() {
-            if (!done && !loading) {
-                const nearBottom = window.innerHeight + window.scrollY >= document.body.offsetHeight - 300;
-                const pageNotFull = document.body.offsetHeight <= window.innerHeight + 100;
-                if (nearBottom || pageNotFull) loadMore();
-            }
-        }
+function setEasterEggTitle(){
+    const r=Math.random();
+    if(r<0.001) siteTitle.textContent='schoolmaxxingggggggg';
+    else if(r<0.01) siteTitle.textContent='classroommaxxinggg';
+    else if(r<0.11) siteTitle.textContent='classroommaxxingg';
+    else siteTitle.textContent='classroommaxxing';
+}
 
-        let searchTimer = null;
-        search.oninput = () => {
-            clearTimeout(searchTimer);
-            searchTimer = setTimeout(() => {
-                const q = search.value.trim();
-                if (q === searchQuery) return;
-                searchQuery = q;
-                allGames = [];
-                page = 1;
-                done = false;
-                loading = false;
-                grid.innerHTML = '';
-                loader.textContent = 'loading…';
-                if (q) {
-                    searchMode = true;
-                    runSearch(q);
-                } else {
-                    searchMode = false;
-                    loadMore();
-                }
-            }, 250);
-        };
+function renderRecent(){
+    recent=recent.slice(0,5);
+    localStorage.setItem('recent',JSON.stringify(recent));
+    recentHead.style.display=recent.length?'flex':'none';
+    recentBox.innerHTML='';
+    recent.forEach(r=>{
+        const b=document.createElement('button');
+        b.textContent=r.name;
+        b.onclick=()=>Lumin.loadGame(r.id);
+        recentBox.appendChild(b);
+    });
+}
 
-        async function runSearch(q) {
-            loading = true;
-            try {
-                const res = await Lumin.getGames({ page: 1, limit: 200, q });
-                const games = res.games || [];
-                done = true;
-                if (!games.length) { loader.textContent = 'no games found'; return; }
-                const imgs = await Promise.all(games.map(g => Lumin.getImageUrl(g.image_token)));
-                const prepared = games.map((g, i) => ({ ...g, _img: imgs[i] }));
-                allGames = prepared;
-                renderGrid(allGames);
-                loader.textContent = '';
-            } catch (e) {
-                loader.textContent = '';
-            } finally {
-                loading = false;
-            }
-        }
+function addRecent(g){
+    recent=recent.filter(x=>x.id!==g.id);
+    recent.unshift(g);
+    recent=recent.slice(0,5);
+    localStorage.setItem('recent',JSON.stringify(recent));
+    renderRecent();
+}
 
-        function loadMore() {
-            if (loading || done) return;
-            loading = true;
-            loader.textContent = 'loading…';
-            Lumin.getGames({ page, limit: 36 }).then(async res => {
-                const games = res.games || [];
-                if (!games.length) { done = true; loader.textContent = ''; return; }
-                const imgs = await Promise.all(games.map(g => Lumin.getImageUrl(g.image_token)));
-                const prepared = games.map((g, i) => ({ ...g, _img: imgs[i] }));
-                allGames = allGames.concat(prepared);
-                if (page >= res.pages) done = true;
-                page++;
-                renderGrid(allGames);
-                loader.textContent = done ? '' : 'scroll for more';
-            }).catch(() => {
-                loader.textContent = '';
-            }).finally(() => { loading = false; });
-        }
+function esc(s){return String(s).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'",'&#39;')}
 
-        randomGame.onclick = () => {
-            const list = allGames;
-            if (!list.length) return;
-            const g = list[Math.floor(Math.random() * list.length)];
+function renderGrid(games){
+    grid.innerHTML='';
+    games.forEach(g=>{
+        const card=document.createElement('div');
+        card.className='card';
+        card.innerHTML=`<img src="${g._img}"><span>${esc(g.name)}</span>`;
+        card.onclick=()=>{
+            card.classList.remove('clicked');
+            void card.offsetWidth;
+            card.classList.add('clicked');
             addRecent(g);
-            Lumin.loadGame(g.id);
+            setTimeout(()=>Lumin.loadGame(g.id),120);
         };
+        grid.appendChild(card);
+    });
+    checkIfNeedMore();
+}
 
-        window.addEventListener('scroll', () => {
-            if (window.scrollY > 650) backUp.style.display = 'inline-flex';
-            else backUp.style.display = 'none';
-            if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 300) checkIfNeedMore();
-        });
-
-        backUp.onclick = () => window.scrollTo({ top: 0, behavior: 'smooth' });
-
-        Lumin.init({ headless: true }).then(() => {
-            setEasterEggTitle();
-            renderRecent();
+function checkIfNeedMore(){
+    if(!done&&!loading){
+        const nearBottom=window.innerHeight+window.scrollY>=document.body.offsetHeight-300;
+        const pageNotFull=document.body.offsetHeight<=window.innerHeight+200;
+        if(nearBottom||pageNotFull){
             loadMore();
-        });
-    </script>
+            setTimeout(checkIfNeedMore,100);
+        }
+    }
+}
+
+let searchTimer=null;
+search.oninput=()=>{
+    clearSearch.style.display=search.value ? 'flex' : 'none';
+    clearTimeout(searchTimer);
+    searchTimer=setTimeout(()=>{
+        const q=search.value.trim();
+        if(q===searchQuery)return;
+        searchQuery=q;
+        allGames=[];
+        page=1;
+        done=false;
+        loading=false;
+        grid.innerHTML='';
+        loader.textContent='loading…';
+        if(q){searchMode=true;runSearch(q);}
+        else{searchMode=false;loadMore();}
+    },250);
+};
+
+clearSearch.onclick=()=>{
+    search.value='';
+    clearSearch.style.display='none';
+    search.dispatchEvent(new Event('input'));
+    search.focus();
+};
+
+async function runSearch(q){
+    loading=true;
+    try{
+        const res=await Lumin.getGames({page:1,limit:200,q});
+        const games=res.games||[];
+        done=true;
+        if(!games.length){loader.textContent='no games found';return;}
+        const imgs=await Promise.all(games.map(g=>Lumin.getImageUrl(g.image_token)));
+        const prepared=games.map((g,i)=>({...g,_img:imgs[i]}));
+        allGames=prepared;
+        renderGrid(allGames);
+        loader.textContent='';
+    }catch(e){
+        loader.textContent='';
+    }finally{
+        loading=false;
+    }
+}
+
+function loadMore(){
+    if(loading||done)return;
+    loading=true;
+    loader.textContent='loading…';
+
+    const LOAD_LIMIT = 90; // 2.5x the old amount
+
+    Lumin.getGames({page,limit:LOAD_LIMIT}).then(async res=>{
+        const games=res.games||[];
+        if(!games.length){done=true;loader.textContent='';return;}
+        const imgs=await Promise.all(games.map(g=>Lumin.getImageUrl(g.image_token)));
+        const prepared=games.map((g,i)=>({...g,_img:imgs[i]}));
+        allGames=allGames.concat(prepared);
+        if(page>=res.pages)done=true;
+        page++;
+        renderGrid(allGames);
+        loader.textContent=done?'':'scroll for more';
+    }).catch(()=>{
+        loader.textContent='';
+    }).finally(()=>{
+        loading=false;
+    });
+}
+
+randomGame.onclick=()=>{
+    const list=allGames;
+    if(!list.length)return;
+    const g=list[Math.floor(Math.random()*list.length)];
+    addRecent(g);
+    Lumin.loadGame(g.id);
+};
+
+window.addEventListener('scroll',()=>{
+    if(window.scrollY>650)backUp.style.display='inline-flex';
+    else backUp.style.display='none';
+    if(window.innerHeight+window.scrollY>=document.body.offsetHeight-300)checkIfNeedMore();
+});
+
+window.addEventListener('keydown',(e)=>{
+    if(e.key === '`'){
+        e.preventDefault();
+        window.location.href = 'https://classroom.google.com';
+    }
+});
+
+backUp.onclick=()=>window.scrollTo({top:0,behavior:'smooth'});
+
+Lumin.init({headless:true}).then(()=>{
+    setEasterEggTitle();
+    renderRecent();
+    loadMore();
+});
+</script>
 </body>
 </html>
