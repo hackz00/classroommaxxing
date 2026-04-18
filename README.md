@@ -13,6 +13,3 @@
 <p align="center">
   <sub><i>Free to host and make links</i></sub>
 </p>
-
-
-https://hackz00.github.io/classroommaxxing/index-v2.html
