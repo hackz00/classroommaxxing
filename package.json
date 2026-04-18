@@ -1,0 +1,16 @@
+{
+  "name": "classroommaxxing",
+  "version": "2.0.0",
+  "description": "classroommaxxing v2 game website",
+  "main": "index.html",
+  "unpkg": "index.html",
+  "files": [
+    "index.html",
+    "index-old.html",
+    "singlefile.html"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "license": "GPL-3.0"
+}
