@@ -1,0 +1,1401 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+    <title>classroommaxxing v2</title>
+    <meta name="title" content="classroommaxxing v2" />
+    <meta name="description" content="classroommaxxing v2 with the GNMath game catalog." />
+
+    <link rel="icon" type="image/png"
+        href="https://raw.githubusercontent.com/hackz00/classroommaxxing/main/favicon.png" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+    <link rel="dns-prefetch" href="//cdn.jsdelivr.net">
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+
+    <style>
+        :root {
+            --bg: #111214;
+            --panel: #17181b;
+            --panel-2: #1d1f23;
+            --line: #26292d;
+            --line-strong: #3a3d42;
+            --text: #eceeef;
+            --muted: #a1a7ae;
+            --soft: #c2c7cd;
+            --accent: #e7f06a;
+            --danger: #ff6b6b;
+            --shadow: 0 10px 28px rgba(0, 0, 0, .35);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html,
+        body {
+            margin: 0;
+            min-height: 100%;
+            background:
+                linear-gradient(to right, rgba(255, 255, 255, .045) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(255, 255, 255, .045) 1px, transparent 1px),
+                linear-gradient(180deg, #121315 0%, #0f1012 100%);
+            background-size: 28px 28px, 28px 28px, auto;
+            background-attachment: fixed;
+            font-family: 'IBM Plex Sans', sans-serif;
+            color: var(--text);
+        }
+
+        body.viewer-open {
+            overflow: hidden;
+        }
+
+        button,
+        input,
+        select {
+            font: inherit;
+        }
+
+        button {
+            color: inherit;
+        }
+
+        [hidden] {
+            display: none !important;
+        }
+
+        header {
+            padding: 14px 16px 12px;
+            border-bottom: 1px solid #24272b;
+            position: sticky;
+            top: 0;
+            background: rgba(17, 18, 20, .92);
+            backdrop-filter: blur(10px);
+            z-index: 10;
+        }
+
+        .headerTop {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 14px;
+            margin-bottom: 10px;
+        }
+
+        h1 {
+            margin: 0;
+            font-size: clamp(24px, 4vw, 34px);
+            font-weight: 700;
+            text-transform: lowercase;
+            letter-spacing: -.03em;
+        }
+
+        #slogan {
+            color: var(--muted);
+            font-size: 13px;
+            margin-top: 2px;
+            min-height: 18px;
+        }
+
+        .topActions {
+            display: flex;
+            gap: 8px;
+            flex: 0 0 auto;
+        }
+
+        .tinyButton,
+        .pillButton,
+        .playerButton {
+            border: 1px solid #2a2d31;
+            background: #17181b;
+            color: #ddd;
+            border-radius: 999px;
+            cursor: pointer;
+            transition: border-color .12s ease, transform .12s ease, background .12s ease;
+        }
+
+        .tinyButton {
+            padding: 8px 11px;
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        .tinyButton:hover,
+        .pillButton:hover,
+        .playerButton:hover {
+            border-color: #555;
+            background: #1d1f23;
+        }
+
+        .tinyButton:active,
+        .pillButton:active,
+        .playerButton:active {
+            transform: translateY(1px);
+        }
+
+        .toolbar {
+            display: grid;
+            grid-template-columns: minmax(180px, 1fr) 155px 145px;
+            gap: 8px;
+        }
+
+        .searchWrap {
+            position: relative;
+            min-width: 0;
+        }
+
+        #search {
+            width: 100%;
+            height: 40px;
+            border-radius: 10px;
+            border: 1px solid #2b2e33;
+            background: #141518;
+            color: var(--text);
+            padding: 0 40px 0 14px;
+            outline: none;
+        }
+
+        #search:focus,
+        select:focus {
+            border-color: #555;
+            box-shadow: 0 0 0 3px rgba(231, 240, 106, .08);
+        }
+
+        #clearSearch {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 22px;
+            height: 22px;
+            border: 0;
+            border-radius: 999px;
+            background: transparent;
+            color: #9aa0a6;
+            cursor: pointer;
+            user-select: none;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            line-height: 1;
+            padding: 0;
+        }
+
+        #clearSearch:hover {
+            color: #fff;
+            background: rgba(255, 255, 255, .06);
+        }
+
+        select {
+            width: 100%;
+            height: 40px;
+            border-radius: 10px;
+            border: 1px solid #2b2e33;
+            background: #141518;
+            color: var(--text);
+            padding: 0 10px;
+            outline: none;
+            cursor: pointer;
+        }
+
+        main {
+            padding: 8px 10px 10px;
+            padding-bottom: 80px;
+        }
+
+        .statusRow {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            margin: 2px 6px 8px;
+        }
+
+        #gameCount,
+        .sectionTitle {
+            color: var(--muted);
+            font-size: 13px;
+            font-weight: 700;
+            text-transform: lowercase;
+        }
+
+        .pillButton {
+            padding: 7px 11px;
+            font-size: 13px;
+            font-weight: 700;
+            white-space: nowrap;
+        }
+
+        .sectionTitle {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 9px 6px 6px;
+            color: var(--text);
+        }
+
+        .sectionTitle span {
+            color: var(--muted);
+            font-weight: 600;
+        }
+
+        #recent {
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+            padding-bottom: 2px;
+            margin-bottom: 10px;
+        }
+
+        #recent button {
+            background: #17181b;
+            border: 1px solid #2a2d31;
+            color: #ddd;
+            padding: 6px 10px;
+            border-radius: 999px;
+            cursor: pointer;
+            flex: 0 0 auto;
+            max-width: 220px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        #recent button:hover {
+            border-color: #555;
+        }
+
+        #featured,
+        #grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(112px, 1fr));
+            gap: 7px;
+            margin-top: 4px;
+        }
+
+        #featured {
+            grid-auto-flow: column;
+            grid-auto-columns: minmax(118px, 150px);
+            grid-template-columns: none;
+            overflow-x: auto;
+            padding-bottom: 2px;
+        }
+
+        .card {
+            appearance: none;
+            display: block;
+            width: 100%;
+            padding: 0;
+            text-align: left;
+            background: #17181b;
+            border: 1px solid #2a2d31;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+            overflow: hidden;
+        }
+
+        .card:hover {
+            border-color: #555;
+            transform: translateY(-4px) scale(1.03);
+            box-shadow: 0 8px 18px rgba(0, 0, 0, .35);
+        }
+
+        .card.clicked {
+            animation: pop .2s ease;
+        }
+
+        @keyframes pop {
+            0% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(.96);
+            }
+
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        .card img {
+            width: 100%;
+            aspect-ratio: 1 / 1;
+            object-fit: cover;
+            display: block;
+            background: #121315;
+        }
+
+        .card span {
+            display: block;
+            padding: 6px;
+            font-size: 12px;
+            color: #c2c7cd;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .card small {
+            display: block;
+            padding: 0 6px 7px;
+            font-size: 10px;
+            color: #8e949b;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        #loader {
+            padding: 12px;
+            text-align: center;
+            color: #888;
+            font-size: 12px;
+        }
+
+        #backUp {
+            position: fixed;
+            left: 50%;
+            bottom: 14px;
+            margin-left: -60px;
+            width: 120px;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 10px 12px;
+            border-radius: 999px;
+            border: 1px solid #2a2d31;
+            background: #17181b;
+            color: #ddd;
+            cursor: pointer;
+            box-shadow: var(--shadow);
+            z-index: 20;
+            transition: border-color .12s ease;
+        }
+
+        #backUp:hover {
+            border-color: #444;
+        }
+
+        #player {
+            position: fixed;
+            inset: 0;
+            z-index: 50;
+            display: none;
+            flex-direction: column;
+            background: #090a0b;
+        }
+
+        #player.active {
+            display: flex;
+        }
+
+        .playerTop {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            padding: 10px;
+            border-bottom: 1px solid #24272b;
+            background: rgba(17, 18, 20, .96);
+        }
+
+        .playerTitle {
+            min-width: 0;
+        }
+
+        #gameName {
+            margin: 0;
+            font-size: 17px;
+            line-height: 1.15;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        #gameMeta {
+            color: var(--muted);
+            font-size: 12px;
+            margin-top: 2px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .playerActions {
+            display: flex;
+            gap: 7px;
+            flex-wrap: wrap;
+            justify-content: flex-end;
+        }
+
+        .playerButton {
+            padding: 7px 10px;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .playerButton.close {
+            border-color: #2a2d31;
+            color: #fff;
+        }
+
+        #gameFrame {
+            flex: 1;
+            width: 100%;
+            border: 0;
+            background: white;
+        }
+
+        #modalOverlay {
+            position: fixed;
+            inset: 0;
+            z-index: 80;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+            background: rgba(0, 0, 0, .62);
+            backdrop-filter: blur(8px);
+        }
+
+        #modalOverlay.active {
+            display: flex;
+        }
+
+        .modal {
+            width: min(520px, 100%);
+            border: 1px solid #30343a;
+            border-radius: 16px;
+            background: #17181b;
+            box-shadow: var(--shadow);
+            overflow: hidden;
+        }
+
+        .modalHeader {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+            padding: 13px 15px;
+            border-bottom: 1px solid #26292d;
+            background: #1d1f23;
+        }
+
+        .modalHeader h2 {
+            margin: 0;
+            font-size: 18px;
+            text-transform: lowercase;
+        }
+
+        #modalClose {
+            width: 30px;
+            height: 30px;
+            border-radius: 999px;
+            border: 1px solid #2a2d31;
+            background: #17181b;
+            color: #ddd;
+            cursor: pointer;
+        }
+
+        .modalBody {
+            padding: 15px;
+            color: var(--soft);
+        }
+
+        .modalBody label {
+            display: block;
+            margin: 0 0 6px;
+            color: var(--text);
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        .modalBody input {
+            width: 100%;
+            height: 39px;
+            border-radius: 10px;
+            border: 1px solid #2b2e33;
+            background: #111214;
+            color: var(--text);
+            padding: 0 12px;
+            margin-bottom: 12px;
+            outline: none;
+        }
+
+        .modalBody input:focus {
+            border-color: #555;
+        }
+
+        .settingsGrid {
+            display: grid;
+            gap: 8px;
+        }
+
+        .wideButton {
+            width: 100%;
+            border: 1px solid #2a2d31;
+            background: #111214;
+            color: #ddd;
+            padding: 10px 12px;
+            border-radius: 10px;
+            cursor: pointer;
+            text-align: left;
+            font-weight: 700;
+        }
+
+        .wideButton:hover {
+            border-color: #555;
+        }
+
+        @media (max-width: 760px) {
+            .headerTop {
+                align-items: flex-start;
+            }
+
+            .toolbar {
+                grid-template-columns: 1fr;
+            }
+
+            .topActions {
+                flex-direction: column;
+            }
+
+            .tinyButton {
+                padding: 7px 9px;
+            }
+
+            .playerTop {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+
+            .playerActions {
+                width: 100%;
+                justify-content: flex-start;
+            }
+
+            .playerButton {
+                flex: 1 1 auto;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div class="headerTop">
+            <div>
+                <h1 id="siteTitle">classroommaxxing v2</h1>
+                <div id="slogan"></div>
+            </div>
+            <div class="topActions">
+                <button id="refreshCatalog" class="tinyButton" type="button">refresh</button>
+                <button id="settingsButton" class="tinyButton" type="button">settings</button>
+            </div>
+        </div>
+
+        <div class="toolbar">
+            <div class="searchWrap">
+                <input id="search" placeholder="Search GNMath games" autocomplete="off" />
+                <button id="clearSearch" type="button" aria-label="Clear search">x</button>
+            </div>
+            <select id="sort">
+                <option value="name">name</option>
+                <option value="newest">newest</option>
+                <option value="oldest">oldest</option>
+                <option value="popular">popular</option>
+                <option value="day">trending day</option>
+                <option value="week">trending week</option>
+                <option value="month">trending month</option>
+            </select>
+            <select id="tagFilter">
+                <option value="">all tags</option>
+            </select>
+        </div>
+    </header>
+
+    <main>
+        <div class="statusRow">
+            <div id="gameCount">loading games...</div>
+            <button id="randomGame" class="pillButton" type="button">random game</button>
+        </div>
+
+        <section id="recentSection" hidden>
+            <div class="sectionTitle">recently played <span>stored on this browser</span></div>
+            <div id="recent"></div>
+        </section>
+
+        <section id="featuredSection" hidden>
+            <div class="sectionTitle">featured <span id="featuredCount"></span></div>
+            <div id="featured"></div>
+        </section>
+
+        <section>
+            <div class="sectionTitle">all games <span id="activeFilter"></span></div>
+            <div id="grid"></div>
+            <div id="loader">loading...</div>
+        </section>
+    </main>
+
+    <button id="backUp" type="button"><span>^</span><span>Back Up</span></button>
+
+    <div id="player" aria-hidden="true">
+        <div class="playerTop">
+            <div class="playerTitle">
+                <h2 id="gameName">game</h2>
+                <div id="gameMeta">loading...</div>
+            </div>
+            <div class="playerActions">
+                <button id="fullscreenGame" class="playerButton" type="button">fullscreen</button>
+                <button id="newTabGame" class="playerButton" type="button">new tab</button>
+                <button id="downloadGame" class="playerButton" type="button">download</button>
+                <button id="closeGame" class="playerButton close" type="button">close</button>
+            </div>
+        </div>
+        <iframe id="gameFrame" title="Game"></iframe>
+    </div>
+
+    <div id="modalOverlay" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+        <div class="modal">
+            <div class="modalHeader">
+                <h2 id="modalTitle">settings</h2>
+                <button id="modalClose" type="button" aria-label="Close settings">x</button>
+            </div>
+            <div id="modalBody" class="modalBody"></div>
+        </div>
+    </div>
+
+    <script>
+        (() => {
+            "use strict";
+
+            const ZONES_URLS = [
+                "https://cdn.jsdelivr.net/gh/freebuisness/assets@main/zones.json",
+                "https://cdn.jsdelivr.net/gh/freebuisness/assets@latest/zones.json",
+                "https://cdn.jsdelivr.net/gh/freebuisness/assets@master/zones.json",
+                "https://cdn.jsdelivr.net/gh/freebuisness/assets/zones.json"
+            ];
+            const COVER_URL = "https://cdn.jsdelivr.net/gh/freebuisness/covers@main";
+            const HTML_URL = "https://cdn.jsdelivr.net/gh/freebuisness/html@main";
+            const HTML_TREE_URL = "https://api.github.com/repos/freebuisness/html/git/trees/main?recursive=1";
+            const RECENT_KEY = "classroommaxxing-v2-recent";
+            const el = {
+                siteTitle: document.getElementById("siteTitle"),
+                slogan: document.getElementById("slogan"),
+                refreshCatalog: document.getElementById("refreshCatalog"),
+                settingsButton: document.getElementById("settingsButton"),
+                search: document.getElementById("search"),
+                clearSearch: document.getElementById("clearSearch"),
+                sort: document.getElementById("sort"),
+                tagFilter: document.getElementById("tagFilter"),
+                gameCount: document.getElementById("gameCount"),
+                randomGame: document.getElementById("randomGame"),
+                recentSection: document.getElementById("recentSection"),
+                recent: document.getElementById("recent"),
+                featuredSection: document.getElementById("featuredSection"),
+                featured: document.getElementById("featured"),
+                featuredCount: document.getElementById("featuredCount"),
+                activeFilter: document.getElementById("activeFilter"),
+                grid: document.getElementById("grid"),
+                loader: document.getElementById("loader"),
+                backUp: document.getElementById("backUp"),
+                player: document.getElementById("player"),
+                gameName: document.getElementById("gameName"),
+                gameMeta: document.getElementById("gameMeta"),
+                fullscreenGame: document.getElementById("fullscreenGame"),
+                newTabGame: document.getElementById("newTabGame"),
+                downloadGame: document.getElementById("downloadGame"),
+                closeGame: document.getElementById("closeGame"),
+                modalOverlay: document.getElementById("modalOverlay"),
+                modalClose: document.getElementById("modalClose"),
+                modalBody: document.getElementById("modalBody")
+            };
+
+            let gameFrame = document.getElementById("gameFrame");
+            let zones = [];
+            let currentList = [];
+            let activeZone = null;
+            let loading = false;
+            let imageObserver = null;
+            let searchTimer = null;
+            let recent = readRecent();
+            const popularity = { year: {}, month: {}, week: {}, day: {} };
+
+            const slogans = ["unlimited games but no games ahhh", "its free guys!!", "made by a human being maybe", "also try waves!!", "????????????????", "games get auto added btw", "àáâãäåāăą", "add text here", "probably not blocked", "100% organic free range games", "update after gta 7", "thank you LuminSDK", "there is no burger", "causes cancer in california", "NO ADS GUYS", "created on Monday, April 13, 2026, 8:36 PM EST", "0o0o0o0o00o0o0o0000o", "also check out fmhy.net!!", "you would never play games at school right...", "keyboard warrior website right here", "25°23′17″N 61°08′23″E", "made in html", "ß ß ß ß ß ß ß ß ß ß", "dont get the site blocked guys :(", "Commas go before 'but' in compound sentences.", "games games games games games games", "alt+tab guys", "you might just have a skill issue", "not responsible for your loss of time", "check your GPA", "wifi not included but required", "seen on tv (no)", "patent pending on something", "probably prohibited by school policy", "łľĺļŀ", "Zzžźż", "₩₪₫€₭₮₯₰₱", "①②③④⑤⑥⑦⑧⑨⑩", "▲▲▲▲▲▲▲▲▲▲", "you can share but not really", "7on3xFRMhj1KYSgqCt1AjV5YS4xzzCsVmGoBcTs9wAw2", "no text here", "idk what else to write here", "lowkey < midkey < highkey", "NaN-inf", "not supported by indians", "tuff in india", "scandoulus activity right here", "there are like 50 of these", "just go play a game >:(", "2026-2026", "d1 lightspeed hater right here", "WE HAVE BALATRO", "an entwine'd website", "n0 n0 n0 n0 n0", "use CachyOS!!", "We abstained yet abhorred the abysmal, abstruse imitate prophecy", "yada yada yada", "1% chance to get classroommaxxinggg btw", "GET BACK TO WORK!", "we dont have real fortnite no", "make sure to show your teachers (dont)", "better than epstein (maybe)", "why are we playing games on our school chromebooks", "dont break school policy guys i told you!!", "goon_max_rizz_god_mango67", "this is peak right", "big E affiliated", "i hate when i snigger", "NOT backed by isreal (yet)", "we are not responsible for any consequences of using this site", "probably shouldnt use this site", "dont get caught guys!!", "definitely dont use this at school", "use at your own risk", "WHAT THE FUCK IS A SHOWER", "coooookie clickeeeeeerrr", "roblox maybe?", "palm beach pete here", "maybe nuke france", "make your own links to the site!!", "@@@@@@@@@@@@@@@@@@@@", "blue bands blue bands blue bands", "fricking packet yo", "stay hydrated!!", "0.1% chance to get schoolmaxxingggggggg", "moving up down left right over", "press `", "over 1000 games", "no obscurity right here", "lets go gambling", "studious behavior over here", "800815", "!@#$%^&*()", "zxcvbnmasdfghjklqwertyuiop", "also try monkeytype!", "gong bong song wong", "-----patel", "rah rah rah rah", "DONT YOU LECTURE ME", "no diddy (yet)", "epstien clicker SOON", "crazy? i was crazy once", "ツツツツツツツツツ", "¯\_(ツ)_/¯  ¯\_(ツ)_/¯", ">>>>>>>>>>>", "（（（( )）））", "balllright", "maybachhh musicc", "this is a game website btw", "yYyyYyyYYyYyYYYyy", ".","homework loading maybe","the bell does not dismiss you guys!!!","academic weapon over here","3 oranges out of 72 bananas","included MLA citations","no plot armor","tabs on tabs on tabs","games on games on games","hw due yesterday","not a virus probably","chromebook scholars over here"];
+
+            function setSlogan() {
+                if (!slogans.length) {
+                    el.slogan.textContent = "";
+                    return;
+                }
+                el.slogan.textContent = slogans[Math.floor(Math.random() * slogans.length)];
+            }
+
+            function readRecent() {
+                try {
+                    const saved = JSON.parse(localStorage.getItem(RECENT_KEY) || "[]");
+                    return Array.isArray(saved) ? saved.slice(0, 6) : [];
+                } catch (error) {
+                    return [];
+                }
+            }
+
+            function writeRecent() {
+                localStorage.setItem(RECENT_KEY, JSON.stringify(recent.slice(0, 6)));
+            }
+
+            function cacheBust(url) {
+                return url + (url.includes("?") ? "&" : "?") + "t=" + Date.now();
+            }
+
+            function replacePlaceholders(value) {
+                return String(value || "")
+                    .replaceAll("{COVER_URL}", COVER_URL)
+                    .replaceAll("{HTML_URL}", HTML_URL);
+            }
+
+            function getGameUrl(zone) {
+                return replacePlaceholders(zone.url);
+            }
+
+            function getCoverUrl(zone) {
+                const cover = replacePlaceholders(zone.cover);
+                if (cover) return cover;
+
+                const label = encodeURIComponent(zone.name || "game");
+                return "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 400'%3E%3Crect width='400' height='400' fill='%2317181b'/%3E%3Ctext x='50%25' y='50%25' fill='%23c2c7cd' font-size='28' font-family='Arial' text-anchor='middle' dominant-baseline='middle'%3E" + label + "%3C/text%3E%3C/svg%3E";
+            }
+
+            function escapeAttribute(value) {
+                return String(value)
+                    .replaceAll("&", "&amp;")
+                    .replaceAll('"', "&quot;")
+                    .replaceAll("<", "&lt;")
+                    .replaceAll(">", "&gt;");
+            }
+
+            function htmlWithBase(html, sourceUrl) {
+                if (/<base\s/i.test(html)) return html;
+
+                let baseHref = sourceUrl;
+                try {
+                    const parsed = new URL(sourceUrl, window.location.href);
+                    parsed.search = "";
+                    parsed.hash = "";
+                    baseHref = parsed.href.slice(0, parsed.href.lastIndexOf("/") + 1);
+                } catch (error) {
+                }
+
+                const baseTag = '<base href="' + escapeAttribute(baseHref) + '">';
+                if (/<head[^>]*>/i.test(html)) {
+                    return html.replace(/<head[^>]*>/i, match => match + baseTag);
+                }
+                return baseTag + html;
+            }
+
+            function getTags(zone) {
+                return Array.isArray(zone.special) ? zone.special.filter(Boolean) : [];
+            }
+
+            function normalizeZone(zone, index) {
+                return {
+                    ...zone,
+                    id: zone.id ?? index,
+                    name: String(zone.name || "untitled game"),
+                    author: String(zone.author || "GNMath"),
+                    featured: Boolean(zone.featured)
+                };
+            }
+
+            function findZoneById(id) {
+                return zones.find(zone => String(zone.id) === String(id));
+            }
+
+            function setLoading(message) {
+                loading = true;
+                el.loader.textContent = message || "loading...";
+                el.refreshCatalog.disabled = true;
+            }
+
+            function clearLoading(message) {
+                loading = false;
+                el.loader.textContent = message || "";
+                el.refreshCatalog.disabled = false;
+            }
+
+            async function resolveZonesUrl() {
+                try {
+                    const response = await fetch(cacheBust("https://api.github.com/repos/freebuisness/assets/commits"), {
+                        cache: "no-store"
+                    });
+                    if (response.ok) {
+                        const commits = await response.json();
+                        const sha = commits?.[0]?.sha;
+                        if (sha) return "https://cdn.jsdelivr.net/gh/freebuisness/assets@" + sha + "/zones.json";
+                    }
+                } catch (error) {
+                    try {
+                        const response = await fetch(cacheBust("https://raw.githubusercontent.com/freebuisness/xml/refs/heads/main/sha.txt"), {
+                            cache: "no-store"
+                        });
+                        if (response.ok) {
+                            const sha = (await response.text()).trim();
+                            if (sha) return "https://cdn.jsdelivr.net/gh/freebuisness/assets@" + sha + "/zones.json";
+                        }
+                    } catch (secondaryError) {
+                    }
+                }
+
+                return ZONES_URLS[Math.floor(Math.random() * ZONES_URLS.length)];
+            }
+
+            async function appendMissingHtmlZones(baseZones) {
+                try {
+                    const knownIds = new Set(baseZones.map(zone => String(zone.id)));
+                    const response = await fetch(cacheBust(HTML_TREE_URL), { cache: "no-store" });
+                    if (!response.ok) return baseZones;
+
+                    const tree = await response.json();
+                    const missingIds = [...new Set((tree.tree || [])
+                        .filter(file => file.type === "blob" && /^[0-9]+\.html$/.test(file.path))
+                        .map(file => file.path.replace(".html", ""))
+                        .filter(id => !knownIds.has(id)))]
+                        .sort((a, b) => Number(a) - Number(b));
+
+                    if (!missingIds.length) return baseZones;
+
+                    const extras = await Promise.all(missingIds.map(createFallbackZone));
+                    return baseZones.concat(extras.filter(Boolean));
+                } catch (error) {
+                    return baseZones;
+                }
+            }
+
+            async function createFallbackZone(id) {
+                let name = "GNMath Game " + id;
+
+                try {
+                    const response = await fetch(cacheBust(HTML_URL + "/" + id + ".html"), { cache: "no-store" });
+                    if (response.ok) {
+                        name = getHtmlTitle(await response.text()) || name;
+                    }
+                } catch (error) {
+                }
+
+                return {
+                    id: Number(id),
+                    name,
+                    author: "GNMath",
+                    url: "{HTML_URL}/" + id + ".html",
+                    cover: "{COVER_URL}/" + id + ".png",
+                    special: ["extra"]
+                };
+            }
+
+            function getHtmlTitle(html) {
+                const match = String(html).match(/<title[^>]*>([\s\S]*?)<\/title>/i);
+                const title = match?.[1]?.replace(/\s+/g, " ").trim();
+                if (!title) return "";
+
+                const decoder = document.createElement("textarea");
+                decoder.innerHTML = title;
+                return decoder.value;
+            }
+
+            async function loadZones() {
+                if (loading) return;
+                setLoading("loading GNMath catalog...");
+
+                try {
+                    const zonesUrl = await resolveZonesUrl();
+                    const response = await fetch(cacheBust(zonesUrl), { cache: "no-store" });
+                    if (!response.ok) throw new Error("catalog returned " + response.status);
+
+                    const json = await response.json();
+                    if (!Array.isArray(json)) throw new Error("catalog was not a list");
+
+                    zones = json
+                        .filter(zone => zone && zone.name && zone.url)
+                        .map(normalizeZone);
+                    if (zones[0]) zones[0].featured = true;
+                    zones = await appendMissingHtmlZones(zones);
+
+                    populateTags();
+                    renderRecent();
+                    render();
+                    clearLoading(zones.length ? "" : "no games found");
+                    openRequestedGame();
+                    fetchAllPopularity();
+                } catch (error) {
+                    zones = [];
+                    currentList = [];
+                    render();
+                    clearLoading("failed to load games");
+                    el.gameCount.textContent = "GNMath catalog failed to load";
+                    console.error(error);
+                }
+            }
+
+            async function fetchAllPopularity() {
+                await Promise.all(["year", "month", "week", "day"].map(fetchPopularity));
+                if (["popular", "month", "week", "day"].includes(el.sort.value)) render();
+            }
+
+            async function fetchPopularity(duration) {
+                try {
+                    const response = await fetch("https://data.jsdelivr.com/v1/stats/packages/gh/freebuisness/html@main/files?period=" + duration + "&limit=1000");
+                    if (!response.ok) return;
+
+                    const data = await response.json();
+                    if (!Array.isArray(data)) return;
+
+                    data.forEach(file => {
+                        const idMatch = String(file.name || "").match(/\/(\d+)\.html$/);
+                        if (!idMatch) return;
+                        popularity[duration][Number(idMatch[1])] = file.hits?.total ?? 0;
+                    });
+                } catch (error) {
+                }
+            }
+
+            function populateTags() {
+                const selected = el.tagFilter.value;
+                const tags = [...new Set(zones.flatMap(getTags))].sort((a, b) => a.localeCompare(b));
+
+                el.tagFilter.innerHTML = "";
+                const all = document.createElement("option");
+                all.value = "";
+                all.textContent = "all tags";
+                el.tagFilter.appendChild(all);
+
+                tags.forEach(tag => {
+                    const option = document.createElement("option");
+                    option.value = tag;
+                    option.textContent = tag.replace(/\b\w/g, letter => letter.toUpperCase());
+                    el.tagFilter.appendChild(option);
+                });
+
+                if (tags.includes(selected)) el.tagFilter.value = selected;
+            }
+
+            function getFilteredZones() {
+                const query = el.search.value.trim().toLowerCase();
+                const tag = el.tagFilter.value;
+
+                return zones.filter(zone => {
+                    const matchesQuery = !query ||
+                        zone.name.toLowerCase().includes(query) ||
+                        zone.author.toLowerCase().includes(query) ||
+                        getTags(zone).some(item => item.toLowerCase().includes(query));
+                    const matchesTag = !tag || getTags(zone).includes(tag);
+                    return matchesQuery && matchesTag;
+                });
+            }
+
+            function sortZones(list) {
+                const sorted = [...list];
+                const score = duration => zone => popularity[duration]?.[Number(zone.id)] ?? 0;
+
+                if (el.sort.value === "newest") {
+                    sorted.sort((a, b) => Number(b.id) - Number(a.id));
+                } else if (el.sort.value === "oldest") {
+                    sorted.sort((a, b) => Number(a.id) - Number(b.id));
+                } else if (el.sort.value === "popular") {
+                    sorted.sort((a, b) => score("year")(b) - score("year")(a) || a.name.localeCompare(b.name));
+                } else if (el.sort.value === "month") {
+                    sorted.sort((a, b) => score("month")(b) - score("month")(a) || a.name.localeCompare(b.name));
+                } else if (el.sort.value === "week") {
+                    sorted.sort((a, b) => score("week")(b) - score("week")(a) || a.name.localeCompare(b.name));
+                } else if (el.sort.value === "day") {
+                    sorted.sort((a, b) => score("day")(b) - score("day")(a) || a.name.localeCompare(b.name));
+                } else {
+                    sorted.sort((a, b) => a.name.localeCompare(b.name));
+                }
+
+                return sorted;
+            }
+
+            function render() {
+                currentList = sortZones(getFilteredZones());
+                renderFeatured();
+                renderGrid(currentList);
+                updateStatus();
+                observeImages();
+            }
+
+            function renderFeatured() {
+                const queryActive = el.search.value.trim() || el.tagFilter.value;
+                const featured = queryActive ? [] : zones.filter(zone => zone.featured).slice(0, 14);
+
+                el.featured.innerHTML = "";
+                el.featuredSection.hidden = featured.length === 0;
+                el.featuredCount.textContent = featured.length ? featured.length + " picks" : "";
+
+                featured.forEach(zone => el.featured.appendChild(createCard(zone)));
+            }
+
+            function renderGrid(list) {
+                el.grid.innerHTML = "";
+                list.forEach(zone => el.grid.appendChild(createCard(zone)));
+                el.loader.textContent = list.length ? "" : "no games found";
+            }
+
+            function updateStatus() {
+                const query = el.search.value.trim();
+                const tag = el.tagFilter.value;
+                const parts = [];
+                if (query) parts.push('search "' + query + '"');
+                if (tag) parts.push("tag " + tag);
+
+                el.clearSearch.style.display = query ? "flex" : "none";
+                el.gameCount.textContent = currentList.length.toLocaleString() + " of " + zones.length.toLocaleString() + " GNMath games";
+                el.activeFilter.textContent = parts.length ? parts.join(" / ") : "showing everything";
+            }
+
+            function createCard(zone) {
+                const card = document.createElement("button");
+                card.type = "button";
+                card.className = "card";
+                card.title = zone.name;
+
+                const img = document.createElement("img");
+                img.dataset.src = getCoverUrl(zone);
+                img.alt = "";
+                img.loading = "lazy";
+                img.decoding = "async";
+
+                const title = document.createElement("span");
+                title.textContent = zone.name;
+
+                const meta = document.createElement("small");
+                meta.textContent = zone.author || "GNMath";
+
+                card.append(img, title, meta);
+                card.addEventListener("click", () => {
+                    card.classList.remove("clicked");
+                    void card.offsetWidth;
+                    card.classList.add("clicked");
+                    window.setTimeout(() => openZone(zone), 110);
+                });
+
+                return card;
+            }
+
+            function observeImages() {
+                if (imageObserver) imageObserver.disconnect();
+                const images = Array.from(document.querySelectorAll("img[data-src]"));
+
+                if (!("IntersectionObserver" in window)) {
+                    images.forEach(loadImage);
+                    return;
+                }
+
+                imageObserver = new IntersectionObserver(entries => {
+                    entries.forEach(entry => {
+                        if (!entry.isIntersecting) return;
+                        loadImage(entry.target);
+                        imageObserver.unobserve(entry.target);
+                    });
+                }, { rootMargin: "900px" });
+
+                images.forEach((image, index) => {
+                    if (index < 48) {
+                        image.loading = "eager";
+                        if ("fetchPriority" in image) image.fetchPriority = index < 18 ? "high" : "auto";
+                        loadImage(image);
+                        return;
+                    }
+
+                    imageObserver.observe(image);
+                });
+            }
+
+            function loadImage(image) {
+                image.src = image.dataset.src;
+                image.removeAttribute("data-src");
+            }
+
+            function renderRecent() {
+                recent = recent.slice(0, 6);
+                writeRecent();
+
+                el.recent.innerHTML = "";
+                el.recentSection.hidden = recent.length === 0;
+
+                recent.forEach(item => {
+                    const zone = findZoneById(item.id) || item;
+                    const button = document.createElement("button");
+                    button.type = "button";
+                    button.textContent = zone.name;
+                    button.title = zone.name;
+                    button.addEventListener("click", () => openZone(zone));
+                    el.recent.appendChild(button);
+                });
+            }
+
+            function addRecent(zone) {
+                recent = recent.filter(item => String(item.id) !== String(zone.id));
+                recent.unshift({
+                    id: zone.id,
+                    name: zone.name,
+                    author: zone.author,
+                    url: zone.url,
+                    cover: zone.cover,
+                    special: zone.special
+                });
+                recent = recent.slice(0, 6);
+                writeRecent();
+                renderRecent();
+            }
+
+            function resetFrame() {
+                const nextFrame = document.createElement("iframe");
+                nextFrame.id = "gameFrame";
+                nextFrame.title = "Game";
+                gameFrame.replaceWith(nextFrame);
+                gameFrame = nextFrame;
+            }
+
+            async function openZone(zone, options = {}) {
+                const shouldPush = options.push !== false;
+                activeZone = zone;
+                addRecent(zone);
+
+                const gameUrl = getGameUrl(zone);
+                if (gameUrl.startsWith("http") && !gameUrl.includes("cdn.jsdelivr.net/gh/freebuisness/html")) {
+                    window.open(gameUrl, "_blank", "noopener");
+                    return;
+                }
+
+                document.body.classList.add("viewer-open");
+                el.player.classList.add("active");
+                el.player.setAttribute("aria-hidden", "false");
+                el.gameName.textContent = zone.name;
+                el.gameMeta.textContent = "loading from GNMath" + (zone.author ? " / by " + zone.author : "");
+                resetFrame();
+
+                try {
+                    const response = await fetch(cacheBust(gameUrl), { cache: "no-store" });
+                    if (!response.ok) throw new Error("game returned " + response.status);
+
+                    const html = htmlWithBase(await response.text(), gameUrl);
+                    gameFrame.contentDocument.open();
+                    gameFrame.contentDocument.write(html);
+                    gameFrame.contentDocument.close();
+
+                    el.gameMeta.textContent = "GNMath game" + (zone.author ? " / by " + zone.author : "");
+                    if (shouldPush) pushGameUrl(zone.id);
+                } catch (error) {
+                    const message = "<!doctype html><style>body{margin:0;background:#111214;color:#eceeef;font:16px Arial;display:grid;place-items:center;height:100vh;text-align:center;padding:20px}</style><div><h1>game failed to load</h1><p>" + String(error.message || error) + "</p></div>";
+                    gameFrame.contentDocument.open();
+                    gameFrame.contentDocument.write(message);
+                    gameFrame.contentDocument.close();
+                    el.gameMeta.textContent = "failed to load";
+                }
+            }
+
+            function pushGameUrl(id) {
+                try {
+                    const url = new URL(window.location.href);
+                    url.searchParams.set("id", id);
+                    history.pushState({ gameId: String(id) }, "", url.toString());
+                } catch (error) {
+                }
+            }
+
+            function clearGameUrl() {
+                try {
+                    const url = new URL(window.location.href);
+                    url.searchParams.delete("id");
+                    history.pushState(null, "", url.toString());
+                } catch (error) {
+                }
+            }
+
+            function closeZone(options = {}) {
+                activeZone = null;
+                el.player.classList.remove("active");
+                el.player.setAttribute("aria-hidden", "true");
+                document.body.classList.remove("viewer-open");
+                resetFrame();
+                if (options.push !== false) clearGameUrl();
+            }
+
+            function openRequestedGame() {
+                try {
+                    const params = new URLSearchParams(window.location.search);
+                    const id = params.get("id");
+                    if (!id) return;
+
+                    const zone = findZoneById(id);
+                    if (zone) openZone(zone, { push: false });
+                } catch (error) {
+                }
+            }
+
+            async function fetchActiveGameHtml() {
+                if (!activeZone) throw new Error("no active game");
+                const response = await fetch(cacheBust(getGameUrl(activeZone)), { cache: "no-store" });
+                if (!response.ok) throw new Error("game returned " + response.status);
+                return response.text();
+            }
+
+            async function openActiveInNewTab() {
+                if (!activeZone) return;
+
+                const gameUrl = getGameUrl(activeZone);
+                const newWindow = window.open("about:blank", "_blank");
+                if (!newWindow) {
+                    alert("Popup blocked. Allow popups and try again.");
+                    return;
+                }
+
+                try {
+                    const html = htmlWithBase(await fetchActiveGameHtml(), gameUrl);
+                    newWindow.document.open();
+                    newWindow.document.write(html);
+                    newWindow.document.close();
+                } catch (error) {
+                    newWindow.location.href = gameUrl;
+                }
+            }
+
+            async function downloadActiveGame() {
+                if (!activeZone) return;
+
+                try {
+                    const html = await fetchActiveGameHtml();
+                    const blob = new Blob([html], { type: "text/html;charset=utf-8" });
+                    const url = URL.createObjectURL(blob);
+                    const link = document.createElement("a");
+                    link.href = url;
+                    link.download = activeZone.name.replace(/[\\/:*?"<>|]+/g, "-") + ".html";
+                    document.body.appendChild(link);
+                    link.click();
+                    link.remove();
+                    URL.revokeObjectURL(url);
+                } catch (error) {
+                    alert("Download failed: " + error.message);
+                }
+            }
+
+            function fullscreenActiveGame() {
+                if (gameFrame.requestFullscreen) {
+                    gameFrame.requestFullscreen();
+                } else if (gameFrame.webkitRequestFullscreen) {
+                    gameFrame.webkitRequestFullscreen();
+                } else if (gameFrame.msRequestFullscreen) {
+                    gameFrame.msRequestFullscreen();
+                }
+            }
+
+            function openSettings() {
+                el.modalBody.innerHTML = "";
+
+                const grid = document.createElement("div");
+                grid.className = "settingsGrid";
+
+                const refresh = document.createElement("button");
+                refresh.type = "button";
+                refresh.className = "wideButton";
+                refresh.textContent = "refresh GNMath catalog";
+                refresh.addEventListener("click", () => {
+                    closeSettings();
+                    loadZones();
+                });
+
+                const clear = document.createElement("button");
+                clear.type = "button";
+                clear.className = "wideButton";
+                clear.textContent = "clear recently played";
+                clear.addEventListener("click", () => {
+                    recent = [];
+                    writeRecent();
+                    renderRecent();
+                });
+
+                grid.append(refresh, clear);
+                el.modalBody.append(grid);
+                el.modalOverlay.classList.add("active");
+            }
+
+            function closeSettings() {
+                el.modalOverlay.classList.remove("active");
+            }
+
+            function bindEvents() {
+                el.search.addEventListener("input", () => {
+                    clearTimeout(searchTimer);
+                    searchTimer = window.setTimeout(render, 160);
+                    el.clearSearch.style.display = el.search.value ? "flex" : "none";
+                });
+
+                el.clearSearch.addEventListener("click", () => {
+                    el.search.value = "";
+                    el.search.focus();
+                    render();
+                });
+
+                el.sort.addEventListener("change", render);
+                el.tagFilter.addEventListener("change", render);
+                el.refreshCatalog.addEventListener("click", loadZones);
+                el.settingsButton.addEventListener("click", openSettings);
+                el.modalClose.addEventListener("click", closeSettings);
+                el.modalOverlay.addEventListener("click", event => {
+                    if (event.target === el.modalOverlay) closeSettings();
+                });
+
+                el.randomGame.addEventListener("click", () => {
+                    const pool = currentList.length ? currentList : zones;
+                    if (!pool.length) return;
+                    openZone(pool[Math.floor(Math.random() * pool.length)]);
+                });
+
+                el.backUp.addEventListener("click", () => window.scrollTo({ top: 0, behavior: "smooth" }));
+                el.closeGame.addEventListener("click", closeZone);
+                el.fullscreenGame.addEventListener("click", fullscreenActiveGame);
+                el.newTabGame.addEventListener("click", openActiveInNewTab);
+                el.downloadGame.addEventListener("click", downloadActiveGame);
+
+                window.addEventListener("scroll", () => {
+                    el.backUp.style.display = window.scrollY > 650 ? "inline-flex" : "none";
+                });
+
+                window.addEventListener("keydown", event => {
+                    if (event.key === "`") {
+                        event.preventDefault();
+                        window.location.href = "https://classroom.google.com";
+                    } else if (event.key === "Escape") {
+                        if (el.modalOverlay.classList.contains("active")) closeSettings();
+                        else if (activeZone) closeZone();
+                    }
+                });
+
+                window.addEventListener("popstate", () => {
+                    const id = new URLSearchParams(window.location.search).get("id");
+                    if (!id && activeZone) closeZone({ push: false });
+                    if (id && (!activeZone || String(activeZone.id) !== String(id))) {
+                        const zone = findZoneById(id);
+                        if (zone) openZone(zone, { push: false });
+                    }
+                });
+            }
+
+            setSlogan();
+            bindEvents();
+            renderRecent();
+            loadZones();
+        })();
+    </script>
+</body>
+
+</html>
