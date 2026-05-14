@@ -7,7 +7,7 @@
 </p>
 
 <p align="center">
-  really tuff simple game website, with no ads! supports recently played games and alot of games from gnmath and custom ones
+  really tuff simple game website, with no ads! (mostly) that supports recently played games and alot of games from gnmath and custom ones
 </p>
 
 <p align="center">
