@@ -1,189 +1,230 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 100 100" preserveAspectRatio="none">
+<svg xmlns="http://www.w3.org/2000/svg" width="100vw" height="100vh">
   <foreignObject x="0" y="0" width="100%" height="100%">
     <html xmlns="http://www.w3.org/1999/xhtml" lang="en">
       <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
         <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet" />
+
         <style>
-          html, body {
+          html,
+          body {
             margin: 0;
-            width: 100%;
-            height: 100%;
+            width: 100vw;
+            height: 100vh;
+            min-width: 100vw;
+            min-height: 100vh;
             overflow: hidden;
             background: #000;
-            font-family: "IBM Plex Sans", sans-serif;
+            font-family: "IBM Plex Sans", Arial, sans-serif;
           }
 
-          #shell {
+          #loaderShell {
             position: fixed;
             inset: 0;
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
             background: #000;
           }
 
-          #app {
-            position: absolute;
+          #loadedPage {
+            position: fixed;
             inset: 0;
-            width: 100%;
-            height: 100%;
+            display: block;
+            width: 100vw;
+            height: 100vh;
             border: 0;
+            margin: 0;
+            padding: 0;
             background: #000;
           }
 
-          #status {
+          #loadingLabel {
             position: fixed;
-            top: 16px;
-            left: 16px;
-            z-index: 999999;
+            top: 12px;
+            left: 12px;
+            z-index: 2147483647;
             color: #fff;
-            font-size: 14px;
-            opacity: 0.85;
-            user-select: none;
+            font: 500 13px/1.2 "IBM Plex Sans", Arial, sans-serif;
             pointer-events: none;
+            user-select: none;
           }
 
-          #error {
+          #loadError {
             position: fixed;
-            top: 42px;
-            left: 16px;
-            right: 16px;
-            z-index: 999999;
-            color: #ff8a8a;
-            font-size: 13px;
-            line-height: 1.4;
-            white-space: pre-wrap;
+            top: 36px;
+            left: 12px;
+            right: 12px;
+            z-index: 2147483647;
             display: none;
-            pointer-events: none;
-            user-select: text;
+            color: #ff8a8a;
+            font: 400 13px/1.4 "IBM Plex Sans", Arial, sans-serif;
+            white-space: pre-wrap;
           }
         </style>
       </head>
+
       <body>
-        <div id="shell">
-          <iframe id="app" sandbox="allow-scripts allow-forms allow-popups allow-same-origin"></iframe>
-          <div id="status">Loading...</div>
-          <div id="error"></div>
+        <div id="loaderShell">
+          <iframe
+            id="loadedPage"
+            title="classroommaxxing"
+            sandbox="allow-scripts allow-forms allow-popups allow-same-origin allow-downloads"
+          ></iframe>
+          <div id="loadingLabel">Loading...</div>
+          <div id="loadError"></div>
         </div>
 
         <script><![CDATA[
           (function () {
+            "use strict";
+
             const RAW_URL = "https://raw.githubusercontent.com/hackz00/classroommaxxing/refs/heads/main/index.html";
             const RAW_BASE = new URL(".", RAW_URL).href;
 
-            const app = document.getElementById("app");
-            const status = document.getElementById("status");
-            const errorBox = document.getElementById("error");
+            const iframe = document.getElementById("loadedPage");
+            const loadingLabel = document.getElementById("loadingLabel");
+            const loadError = document.getElementById("loadError");
 
-            function shouldRewrite(url) {
-              if (!url) return false;
-              const u = String(url).trim();
-              return !(
-                u.startsWith("#") ||
-                u.startsWith("data:") ||
-                u.startsWith("blob:") ||
-                u.startsWith("javascript:") ||
-                u.startsWith("mailto:") ||
-                u.startsWith("tel:") ||
-                u.startsWith("http://") ||
-                u.startsWith("https://") ||
-                u.startsWith("//")
+            function isAbsoluteOrSpecialUrl(value) {
+              const url = String(value || "").trim();
+              return (
+                url === "" ||
+                url.startsWith("#") ||
+                url.startsWith("//") ||
+                /^[a-zA-Z][a-zA-Z0-9+.-]*:/.test(url)
               );
             }
 
-            function resolveUrl(url) {
-              if (!shouldRewrite(url)) return url;
+            function absolutize(value) {
+              if (isAbsoluteOrSpecialUrl(value)) return value;
+
               try {
-                return new URL(url, RAW_BASE).href;
-              } catch {
-                return url;
+                return new URL(value, RAW_BASE).href;
+              } catch (_) {
+                return value;
               }
             }
 
-            function rewriteSrcset(srcset) {
-              if (!srcset) return srcset;
-              return srcset
+            function rewriteSrcset(value) {
+              return String(value || "")
                 .split(",")
-                .map(part => {
-                  const trimmed = part.trim();
-                  if (!trimmed) return trimmed;
-                  const pieces = trimmed.split(/\s+/);
-                  const url = pieces.shift();
-                  const rest = pieces.join(" ");
-                  const resolved = resolveUrl(url);
-                  return rest ? `${resolved} ${rest}` : resolved;
+                .map(function (candidate) {
+                  const parts = candidate.trim().split(/\s+/);
+                  const url = parts.shift();
+
+                  if (!url) return "";
+
+                  const descriptor = parts.join(" ");
+                  const absoluteUrl = absolutize(url);
+
+                  return descriptor ? absoluteUrl + " " + descriptor : absoluteUrl;
                 })
+                .filter(Boolean)
                 .join(", ");
             }
 
-            function rewriteHtml(htmlText) {
+            function rewriteCssUrls(cssText) {
+              return String(cssText || "").replace(
+                /url\(\s*(['"]?)(?!data:|blob:|https?:|\/\/|#)([^'")]+)\1\s*\)/gi,
+                function (_, quote, url) {
+                  return "url(" + quote + absolutize(url.trim()) + quote + ")";
+                }
+              );
+            }
+
+            function rewriteDocument(htmlText) {
               const parser = new DOMParser();
               const doc = parser.parseFromString(htmlText, "text/html");
+
+              if (!doc.documentElement) {
+                throw new Error("Remote HTML did not parse as a document.");
+              }
 
               if (!doc.head) {
                 const head = doc.createElement("head");
                 doc.documentElement.insertBefore(head, doc.body || null);
               }
 
+              if (!doc.body) {
+                doc.documentElement.appendChild(doc.createElement("body"));
+              }
+
+              doc.querySelectorAll("base").forEach(function (base) {
+                base.remove();
+              });
+
               const base = doc.createElement("base");
               base.href = RAW_BASE;
-              doc.head.prepend(base);
+              doc.head.insertBefore(base, doc.head.firstChild);
 
-              const fontPreconnect1 = doc.createElement("link");
-              fontPreconnect1.rel = "preconnect";
-              fontPreconnect1.href = "https://fonts.googleapis.com";
-              doc.head.prepend(fontPreconnect1);
+              const fontPreconnectA = doc.createElement("link");
+              fontPreconnectA.rel = "preconnect";
+              fontPreconnectA.href = "https://fonts.googleapis.com";
+              doc.head.appendChild(fontPreconnectA);
 
-              const fontPreconnect2 = doc.createElement("link");
-              fontPreconnect2.rel = "preconnect";
-              fontPreconnect2.href = "https://fonts.gstatic.com";
-              fontPreconnect2.crossOrigin = "anonymous";
-              doc.head.prepend(fontPreconnect2);
+              const fontPreconnectB = doc.createElement("link");
+              fontPreconnectB.rel = "preconnect";
+              fontPreconnectB.href = "https://fonts.gstatic.com";
+              fontPreconnectB.crossOrigin = "anonymous";
+              doc.head.appendChild(fontPreconnectB);
 
-              const fontCss = doc.createElement("link");
-              fontCss.rel = "stylesheet";
-              fontCss.href = "https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&display=swap";
-              doc.head.prepend(fontCss);
+              const fontStylesheet = doc.createElement("link");
+              fontStylesheet.rel = "stylesheet";
+              fontStylesheet.href = "https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&display=swap";
+              doc.head.appendChild(fontStylesheet);
 
-              const forceFont = doc.createElement("style");
-              forceFont.textContent = `
-                html, body, body * {
-                  font-family: "IBM Plex Sans", sans-serif !important;
-                }
-              `;
-              doc.head.appendChild(forceFont);
-
-              doc.querySelectorAll("[src],[href],[action],[poster],[data-src],[data-href],[srcset]").forEach((el) => {
-                for (const attr of ["src", "href", "action", "poster", "data-src", "data-href"]) {
+              doc.querySelectorAll("[src],[href],[action],[poster],[data-src],[data-href],[srcset]").forEach(function (el) {
+                ["src", "href", "action", "poster", "data-src", "data-href"].forEach(function (attr) {
                   if (el.hasAttribute(attr)) {
-                    el.setAttribute(attr, resolveUrl(el.getAttribute(attr)));
+                    el.setAttribute(attr, absolutize(el.getAttribute(attr)));
                   }
-                }
+                });
+
                 if (el.hasAttribute("srcset")) {
                   el.setAttribute("srcset", rewriteSrcset(el.getAttribute("srcset")));
                 }
               });
 
+              doc.querySelectorAll("style").forEach(function (style) {
+                style.textContent = rewriteCssUrls(style.textContent);
+              });
+
+              doc.querySelectorAll("[style]").forEach(function (el) {
+                el.setAttribute("style", rewriteCssUrls(el.getAttribute("style")));
+              });
+
+              const shellFixes = doc.createElement("style");
+              shellFixes.textContent = [
+                "html,body{margin:0;min-width:100%;min-height:100%;background:#000;font-family:\"IBM Plex Sans\",Arial,sans-serif;}",
+                "img,video,canvas,svg,iframe{max-width:100%;}",
+                "*{box-sizing:border-box;}"
+              ].join("\n");
+              doc.head.appendChild(shellFixes);
+
               return "<!doctype html>\n" + doc.documentElement.outerHTML;
             }
 
             fetch(RAW_URL, { cache: "no-store" })
-              .then(async (res) => {
-                if (!res.ok) throw new Error(`HTTP ${res.status} ${res.statusText}`);
-                return res.text();
+              .then(function (response) {
+                if (!response.ok) {
+                  throw new Error("HTTP " + response.status + " " + response.statusText);
+                }
+
+                return response.text();
               })
-              .then((html) => {
-                app.srcdoc = rewriteHtml(html);
-                status.style.display = "none";
+              .then(function (htmlText) {
+                iframe.srcdoc = rewriteDocument(htmlText);
+                loadingLabel.style.display = "none";
               })
-              .catch((err) => {
-                status.textContent = "Load failed";
-                errorBox.style.display = "block";
-                errorBox.textContent =
-                  "Failed to load remote HTML.\\n\\n" +
-                  err.message +
-                  "\\n\\nThe page may still need its own asset paths fixed inside the original HTML.";
+              .catch(function (error) {
+                loadingLabel.textContent = "Load failed";
+                loadError.style.display = "block";
+                loadError.textContent = "Failed to load remote HTML.\n\n" + error.message;
               });
           })();
         ]]></script>
