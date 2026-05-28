@@ -6,7 +6,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
-        <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+        <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet" />
         <style>
           html, body {
             margin: 0;
@@ -63,11 +63,11 @@
       <body>
         <div id="shell">
           <iframe id="app" sandbox="allow-scripts allow-forms allow-popups allow-same-origin"></iframe>
-          <div id="status">loading...</div>
+          <div id="status">Loading...</div>
           <div id="error"></div>
         </div>
 
-        <script>
+        <script><![CDATA[
           (function () {
             const RAW_URL = "https://raw.githubusercontent.com/hackz00/classroommaxxing/refs/heads/main/index.html";
             const RAW_BASE = new URL(".", RAW_URL).href;
@@ -186,7 +186,7 @@
                   "\\n\\nThe page may still need its own asset paths fixed inside the original HTML.";
               });
           })();
-        </script>
+        ]]></script>
       </body>
     </html>
   </foreignObject>
