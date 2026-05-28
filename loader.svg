@@ -1,0 +1,193 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 100 100" preserveAspectRatio="none">
+  <foreignObject x="0" y="0" width="100%" height="100%">
+    <html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+      <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
+        <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+        <style>
+          html, body {
+            margin: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background: #000;
+            font-family: "IBM Plex Sans", sans-serif;
+          }
+
+          #shell {
+            position: fixed;
+            inset: 0;
+            background: #000;
+          }
+
+          #app {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            border: 0;
+            background: #000;
+          }
+
+          #status {
+            position: fixed;
+            top: 16px;
+            left: 16px;
+            z-index: 999999;
+            color: #fff;
+            font-size: 14px;
+            opacity: 0.85;
+            user-select: none;
+            pointer-events: none;
+          }
+
+          #error {
+            position: fixed;
+            top: 42px;
+            left: 16px;
+            right: 16px;
+            z-index: 999999;
+            color: #ff8a8a;
+            font-size: 13px;
+            line-height: 1.4;
+            white-space: pre-wrap;
+            display: none;
+            pointer-events: none;
+            user-select: text;
+          }
+        </style>
+      </head>
+      <body>
+        <div id="shell">
+          <iframe id="app" sandbox="allow-scripts allow-forms allow-popups allow-same-origin"></iframe>
+          <div id="status">loading...</div>
+          <div id="error"></div>
+        </div>
+
+        <script>
+          (function () {
+            const RAW_URL = "https://raw.githubusercontent.com/hackz00/classroommaxxing/refs/heads/main/index.html";
+            const RAW_BASE = new URL(".", RAW_URL).href;
+
+            const app = document.getElementById("app");
+            const status = document.getElementById("status");
+            const errorBox = document.getElementById("error");
+
+            function shouldRewrite(url) {
+              if (!url) return false;
+              const u = String(url).trim();
+              return !(
+                u.startsWith("#") ||
+                u.startsWith("data:") ||
+                u.startsWith("blob:") ||
+                u.startsWith("javascript:") ||
+                u.startsWith("mailto:") ||
+                u.startsWith("tel:") ||
+                u.startsWith("http://") ||
+                u.startsWith("https://") ||
+                u.startsWith("//")
+              );
+            }
+
+            function resolveUrl(url) {
+              if (!shouldRewrite(url)) return url;
+              try {
+                return new URL(url, RAW_BASE).href;
+              } catch {
+                return url;
+              }
+            }
+
+            function rewriteSrcset(srcset) {
+              if (!srcset) return srcset;
+              return srcset
+                .split(",")
+                .map(part => {
+                  const trimmed = part.trim();
+                  if (!trimmed) return trimmed;
+                  const pieces = trimmed.split(/\s+/);
+                  const url = pieces.shift();
+                  const rest = pieces.join(" ");
+                  const resolved = resolveUrl(url);
+                  return rest ? `${resolved} ${rest}` : resolved;
+                })
+                .join(", ");
+            }
+
+            function rewriteHtml(htmlText) {
+              const parser = new DOMParser();
+              const doc = parser.parseFromString(htmlText, "text/html");
+
+              if (!doc.head) {
+                const head = doc.createElement("head");
+                doc.documentElement.insertBefore(head, doc.body || null);
+              }
+
+              const base = doc.createElement("base");
+              base.href = RAW_BASE;
+              doc.head.prepend(base);
+
+              const fontPreconnect1 = doc.createElement("link");
+              fontPreconnect1.rel = "preconnect";
+              fontPreconnect1.href = "https://fonts.googleapis.com";
+              doc.head.prepend(fontPreconnect1);
+
+              const fontPreconnect2 = doc.createElement("link");
+              fontPreconnect2.rel = "preconnect";
+              fontPreconnect2.href = "https://fonts.gstatic.com";
+              fontPreconnect2.crossOrigin = "anonymous";
+              doc.head.prepend(fontPreconnect2);
+
+              const fontCss = doc.createElement("link");
+              fontCss.rel = "stylesheet";
+              fontCss.href = "https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&display=swap";
+              doc.head.prepend(fontCss);
+
+              const forceFont = doc.createElement("style");
+              forceFont.textContent = `
+                html, body, body * {
+                  font-family: "IBM Plex Sans", sans-serif !important;
+                }
+              `;
+              doc.head.appendChild(forceFont);
+
+              doc.querySelectorAll("[src],[href],[action],[poster],[data-src],[data-href],[srcset]").forEach((el) => {
+                for (const attr of ["src", "href", "action", "poster", "data-src", "data-href"]) {
+                  if (el.hasAttribute(attr)) {
+                    el.setAttribute(attr, resolveUrl(el.getAttribute(attr)));
+                  }
+                }
+                if (el.hasAttribute("srcset")) {
+                  el.setAttribute("srcset", rewriteSrcset(el.getAttribute("srcset")));
+                }
+              });
+
+              return "<!doctype html>\n" + doc.documentElement.outerHTML;
+            }
+
+            fetch(RAW_URL, { cache: "no-store" })
+              .then(async (res) => {
+                if (!res.ok) throw new Error(`HTTP ${res.status} ${res.statusText}`);
+                return res.text();
+              })
+              .then((html) => {
+                app.srcdoc = rewriteHtml(html);
+                status.style.display = "none";
+              })
+              .catch((err) => {
+                status.textContent = "Load failed";
+                errorBox.style.display = "block";
+                errorBox.textContent =
+                  "Failed to load remote HTML.\\n\\n" +
+                  err.message +
+                  "\\n\\nThe page may still need its own asset paths fixed inside the original HTML.";
+              });
+          })();
+        </script>
+      </body>
+    </html>
+  </foreignObject>
+</svg>
