@@ -8,21 +8,42 @@
   <text x="640" y="360" fill="#eceeef" font-family="Arial, sans-serif" font-size="28" text-anchor="middle">classroommaxxing v3</text>
   <foreignObject x="0" y="0" width="1280" height="720">
     <body xmlns="http://www.w3.org/1999/xhtml" style="margin:0;width:100vw;height:100vh;overflow:hidden;background:#111214;">
-      <iframe id="cmxFrame" title="classroommaxxing v3" src="index.html" referrerpolicy="no-referrer" allowfullscreen="allowfullscreen"></iframe>
+      <iframe id="cmxFrame" title="classroommaxxing v3" referrerpolicy="no-referrer" allowfullscreen="allowfullscreen"></iframe>
       <div class="fallback" id="fallback" hidden="hidden">loading classroommaxxing v3...</div>
       <script><![CDATA[
         (function() {
           var frame = document.getElementById('cmxFrame');
           var fallback = document.getElementById('fallback');
-          var target = new URL(frame.getAttribute('src') || 'index.html', window.location.href).href;
-          if (frame.src !== target) frame.src = target;
-          frame.addEventListener('error', function() { window.location.replace(target); });
+          var target = new URL('index.html', window.location.href).href;
+
+          function showFallback() {
+            fallback.hidden = false;
+            window.location.replace(target);
+          }
+
+          fetch(target, { cache: 'no-store' })
+            .then(function(response) {
+              if (!response.ok) throw new Error('index returned ' + response.status);
+              return response.text();
+            })
+            .then(function(html) {
+              try {
+                var doc = frame.contentDocument;
+                if (!doc) throw new Error('iframe document unavailable');
+                doc.open();
+                doc.write(html);
+                doc.close();
+              } catch (error) {
+                frame.srcdoc = html;
+              }
+            })
+            .catch(showFallback);
+
           window.setTimeout(function() {
             try {
               if (!frame.contentWindow) throw new Error('iframe unavailable');
             } catch (error) {
-              fallback.hidden = false;
-              window.location.replace(target);
+              showFallback();
             }
           }, 2500);
         })();
