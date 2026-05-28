@@ -43,6 +43,41 @@
             font-family: "IBM Plex Sans", Arial, sans-serif;
           }
 
+          #loadingBar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 2147483647;
+            height: 3px;
+            overflow: hidden;
+            background: rgba(255, 255, 255, 0.08);
+          }
+
+          #loadingBar::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 36%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.82), transparent);
+            animation: topProgress 1.05s ease-in-out infinite;
+            transform: translateX(-120%);
+          }
+
+          @keyframes topProgress {
+            from {
+              opacity: 0.45;
+              transform: translateX(-120%);
+            }
+
+            to {
+              opacity: 1;
+              transform: translateX(300%);
+            }
+          }
+
           #loadingLabel {
             top: 12px;
             color: #fff;
@@ -62,11 +97,19 @@
             line-height: 1.4;
             white-space: pre-wrap;
           }
+
+          @media (prefers-reduced-motion: reduce) {
+            #loadingBar::after {
+              animation: none;
+              transform: translateX(0);
+            }
+          }
         </style>
       </head>
       <body>
         <div id="loaderShell">
           <iframe id="loadedPage" title="classroommaxxing v4"></iframe>
+          <div id="loadingBar" aria-hidden="true"></div>
           <div id="loadingLabel">Loading...</div>
           <div id="loadError"></div>
         </div>
@@ -79,6 +122,7 @@
             const RAW_BASE = new URL(".", RAW_URL).href;
 
             const iframe = document.getElementById("loadedPage");
+            const loadingBar = document.getElementById("loadingBar");
             const loadingLabel = document.getElementById("loadingLabel");
             const loadError = document.getElementById("loadError");
             let activeObjectUrl = "";
@@ -195,8 +239,11 @@
               shellFixes.textContent = [
                 "html,body{margin:0;min-width:100%;min-height:100%;font-family:\"IBM Plex Sans\",Arial,sans-serif;}",
                 "img,video,canvas,svg,iframe{max-width:100%;}",
-                "#backUp{left:auto;right:16px;bottom:16px;margin-left:0;width:auto;min-width:92px;padding:9px 13px;border-color:#34383f;background:#1b1d21;}",
-                "#backUp:hover{border-color:var(--accent);}",
+                ":root{--accent:#555;--hover-line:#555;--control-hover:#1d1f23;--focus:rgba(255,255,255,.10);}",
+                "#search:focus,select:focus{border-color:#555;box-shadow:0 0 0 3px rgba(255,255,255,.10);}",
+                "#loader:not([data-state='loading']):not(:empty)::after{background:#777;}",
+                "#backUp{left:auto;right:16px;bottom:16px;margin-left:0;width:auto;min-width:92px;padding:9px 13px;border-color:#34383f;background:#1b1d21;transition:border-color .14s ease,background .14s ease,color .14s ease,transform .14s ease;}",
+                "#backUp:hover{border-color:#555;background:#1d1f23;color:#fff;transform:translateY(-2px);}",
                 "*{box-sizing:border-box;}"
               ].join("\n");
               doc.head.appendChild(shellFixes);
@@ -235,9 +282,11 @@
               .then(function (htmlText) {
                 const preparedHtml = prepareHtml(htmlText);
                 renderPreparedHtml(preparedHtml);
+                loadingBar.style.display = "none";
                 loadingLabel.style.display = "none";
               })
               .catch(function (error) {
+                loadingBar.style.display = "none";
                 loadingLabel.textContent = "Load failed";
                 loadError.style.display = "block";
                 loadError.textContent = "Failed to load remote HTML.\n\n" + (error && error.message ? error.message : String(error));
