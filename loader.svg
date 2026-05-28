@@ -1,80 +1,72 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="100vw" height="100vh">
-  <foreignObject x="0" y="0" width="100%" height="100%">
+<svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" overflow="hidden" style="display:block;position:fixed;inset:0;width:100%;height:100%;background:#000">
+  <foreignObject x="0" y="0" width="100%" height="100%" overflow="hidden">
     <html xmlns="http://www.w3.org/1999/xhtml" lang="en">
       <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
         <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet" />
-
         <style>
           html,
           body {
             margin: 0;
-            width: 100vw;
-            height: 100vh;
-            min-width: 100vw;
-            min-height: 100vh;
+            width: 100%;
+            height: 100%;
             overflow: hidden;
             background: #000;
             font-family: "IBM Plex Sans", Arial, sans-serif;
           }
 
-          #loaderShell {
+          #loaderShell,
+          #loadedPage {
             position: fixed;
             inset: 0;
-            width: 100vw;
-            height: 100vh;
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
             overflow: hidden;
             background: #000;
           }
 
           #loadedPage {
-            position: fixed;
-            inset: 0;
             display: block;
-            width: 100vw;
-            height: 100vh;
             border: 0;
-            margin: 0;
-            padding: 0;
-            background: #000;
+          }
+
+          #loadingLabel,
+          #loadError {
+            position: fixed;
+            left: 12px;
+            z-index: 2147483647;
+            font-family: "IBM Plex Sans", Arial, sans-serif;
           }
 
           #loadingLabel {
-            position: fixed;
             top: 12px;
-            left: 12px;
-            z-index: 2147483647;
             color: #fff;
-            font: 500 13px/1.2 "IBM Plex Sans", Arial, sans-serif;
+            font-size: 13px;
+            font-weight: 500;
+            line-height: 1.2;
             pointer-events: none;
             user-select: none;
           }
 
           #loadError {
-            position: fixed;
             top: 36px;
-            left: 12px;
             right: 12px;
-            z-index: 2147483647;
             display: none;
             color: #ff8a8a;
-            font: 400 13px/1.4 "IBM Plex Sans", Arial, sans-serif;
+            font-size: 13px;
+            line-height: 1.4;
             white-space: pre-wrap;
           }
         </style>
       </head>
-
       <body>
         <div id="loaderShell">
-          <iframe
-            id="loadedPage"
-            title="classroommaxxing"
-            sandbox="allow-scripts allow-forms allow-popups allow-same-origin allow-downloads"
-          ></iframe>
+          <iframe id="loadedPage" title="classroommaxxing" sandbox="allow-scripts allow-forms allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-downloads"></iframe>
           <div id="loadingLabel">Loading...</div>
           <div id="loadError"></div>
         </div>
@@ -89,6 +81,7 @@
             const iframe = document.getElementById("loadedPage");
             const loadingLabel = document.getElementById("loadingLabel");
             const loadError = document.getElementById("loadError");
+            let activeObjectUrl = "";
 
             function isAbsoluteOrSpecialUrl(value) {
               const url = String(value || "").trim();
@@ -137,7 +130,7 @@
               );
             }
 
-            function rewriteDocument(htmlText) {
+            function prepareHtml(htmlText) {
               const parser = new DOMParser();
               const doc = parser.parseFromString(htmlText, "text/html");
 
@@ -200,7 +193,7 @@
 
               const shellFixes = doc.createElement("style");
               shellFixes.textContent = [
-                "html,body{margin:0;min-width:100%;min-height:100%;background:#000;font-family:\"IBM Plex Sans\",Arial,sans-serif;}",
+                "html,body{margin:0;min-width:100%;min-height:100%;font-family:\"IBM Plex Sans\",Arial,sans-serif;}",
                 "img,video,canvas,svg,iframe{max-width:100%;}",
                 "*{box-sizing:border-box;}"
               ].join("\n");
@@ -218,13 +211,21 @@
                 return response.text();
               })
               .then(function (htmlText) {
-                iframe.srcdoc = rewriteDocument(htmlText);
+                const preparedHtml = prepareHtml(htmlText);
+                const blob = new Blob([preparedHtml], { type: "text/html;charset=utf-8" });
+
+                if (activeObjectUrl) {
+                  URL.revokeObjectURL(activeObjectUrl);
+                }
+
+                activeObjectUrl = URL.createObjectURL(blob);
+                iframe.src = activeObjectUrl;
                 loadingLabel.style.display = "none";
               })
               .catch(function (error) {
                 loadingLabel.textContent = "Load failed";
                 loadError.style.display = "block";
-                loadError.textContent = "Failed to load remote HTML.\n\n" + error.message;
+                loadError.textContent = "Failed to load remote HTML.\n\n" + (error && error.message ? error.message : String(error));
               });
           })();
         ]]></script>
