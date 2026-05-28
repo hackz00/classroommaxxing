@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>loading...</title>
+  <style>
+    html, body {
+      margin: 0;
+      width: 100%;
+      height: 100%;
+      background: #000;
+      color: #fff;
+      overflow: hidden;
+      font-family: "IBM Plex Sans", sans-serif;
+    }
+
+    #status {
+      position: fixed;
+      top: 16px;
+      left: 16px;
+      z-index: 999999;
+      font-size: 14px;
+      opacity: 0.85;
+      pointer-events: none;
+      user-select: none;
+    }
+
+    #error {
+      position: fixed;
+      top: 44px;
+      left: 16px;
+      right: 16px;
+      z-index: 999999;
+      font-size: 13px;
+      line-height: 1.4;
+      white-space: pre-wrap;
+      color: #ff8a8a;
+      display: none;
+      pointer-events: none;
+      user-select: text;
+    }
+  </style>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div id="status">loading classroommaxxing...</div>
+  <div id="error"></div>
+
+  <script>
+    const RAW_URL = "https://raw.githubusercontent.com/hackz00/classroommaxxing/refs/heads/main/index.html";
+    const RAW_BASE = new URL(".", RAW_URL).href;
+
+    function resolveUrl(url) {
+      if (!url) return url;
+      const u = String(url).trim();
+
+      if (
+        u.startsWith("#") ||
+        u.startsWith("data:") ||
+        u.startsWith("blob:") ||
+        u.startsWith("javascript:") ||
+        u.startsWith("mailto:") ||
+        u.startsWith("tel:") ||
+        u.startsWith("http://") ||
+        u.startsWith("https://") ||
+        u.startsWith("//")
+      ) {
+        return u;
+      }
+
+      try {
+        return new URL(u, RAW_BASE).href;
+      } catch {
+        return u;
+      }
+    }
+
+    function rewriteSrcset(srcset) {
+      if (!srcset) return srcset;
+      return srcset
+        .split(",")
+        .map(part => {
+          const trimmed = part.trim();
+          if (!trimmed) return trimmed;
+          const pieces = trimmed.split(/\s+/);
+          const url = pieces.shift();
+          const rest = pieces.join(" ");
+          const resolved = resolveUrl(url);
+          return rest ? `${resolved} ${rest}` : resolved;
+        })
+        .join(", ");
+    }
+
+    function fixRelativeUrls(doc) {
+      const base = doc.createElement("base");
+      base.href = RAW_BASE;
+      doc.head.prepend(base);
+
+      const fontLink = doc.createElement("link");
+      fontLink.rel = "preconnect";
+      fontLink.href = "https://fonts.googleapis.com";
+      doc.head.prepend(fontLink);
+
+      const fontLink2 = doc.createElement("link");
+      fontLink2.rel = "preconnect";
+      fontLink2.href = "https://fonts.gstatic.com";
+      fontLink2.crossOrigin = "anonymous";
+      doc.head.prepend(fontLink2);
+
+      const fontCss = doc.createElement("link");
+      fontCss.rel = "stylesheet";
+      fontCss.href = "https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&display=swap";
+      doc.head.prepend(fontCss);
+
+      const forceFont = doc.createElement("style");
+      forceFont.textContent = `
+        html, body, body * {
+          font-family: "IBM Plex Sans", sans-serif !important;
+        }
+      `;
+      doc.head.appendChild(forceFont);
+
+      doc.querySelectorAll("[src],[href],[action],[poster],[data-src],[data-href],[srcset]").forEach((el) => {
+        for (const attr of ["src", "href", "action", "poster", "data-src", "data-href"]) {
+          if (el.hasAttribute(attr)) {
+            el.setAttribute(attr, resolveUrl(el.getAttribute(attr)));
+          }
+        }
+        if (el.hasAttribute("srcset")) {
+          el.setAttribute("srcset", rewriteSrcset(el.getAttribute("srcset")));
+        }
+      });
+    }
+
+    fetch(RAW_URL, { cache: "no-store" })
+      .then(async (res) => {
+        if (!res.ok) throw new Error(`HTTP ${res.status} ${res.statusText}`);
+        return res.text();
+      })
+      .then((html) => {
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(html, "text/html");
+
+        if (!doc.head) {
+          const head = doc.createElement("head");
+          doc.documentElement.insertBefore(head, doc.body || null);
+        }
+
+        fixRelativeUrls(doc);
+
+        document.open();
+        document.write("<!doctype html>\n" + doc.documentElement.outerHTML);
+        document.close();
+      })
+      .catch((err) => {
+        const errorBox = document.getElementById("error");
+        errorBox.style.display = "block";
+        errorBox.textContent =
+          "Failed to load remote HTML.\n\n" +
+          err.message +
+          "\n\nIf the page itself loads other files with relative paths, those paths need to be absolute or rewritten too.";
+        document.getElementById("status").textContent = "Load failed";
+      });
+  </script>
+</body>
+</html>
