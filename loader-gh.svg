@@ -36,7 +36,7 @@
           window.addEventListener('resize', size);
           (async () => {
             try {
-              var u = atob('aHR0cHM6Ly9jZG4uanNkZWxpdnIubmV0L2doL2hhY2t6MDAvY2xhc3Nyb29tbWF4eGluZ0B2Ni8=') + 'index.html?t=' + Date.now();
+              var u = atob('aHR0cHM6Ly9jZG4uanNkZWxpdnIubmV0L2doL2hhY2t6MDAvY2xhc3Nyb29tbWF4eGluZ0B2Ni4wLjEv') + 'index.html?t=' + Date.now();
               var res = await fetch(u);
               var text = await res.text();
               var frame = document.getElementById('fm');
