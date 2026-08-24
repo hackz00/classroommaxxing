@@ -8,7 +8,8 @@
   "files": [
     "index.html",
     "loader.svg",
-    "404.html"
+    "404.html",
+    "favicon.png"
   ],
   "license": "GPL-3.0"
 }
