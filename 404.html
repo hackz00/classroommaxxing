@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+    <title>error 404 — classroommaxxing</title>
+    <meta name="robots" content="noindex" />
+    <style>
+        :root {
+            --bg0: #0e0f11;
+            --bg1: #131417;
+            --line: #23262b;
+            --line-2: #363b42;
+            --tx-hi: #f0f2f4;
+            --tx-mid: #a9b0b8;
+            --tx-lo: #747b84;
+            --font-sans: 'IBM Plex Sans', system-ui, sans-serif;
+            --font-mono: 'IBM Plex Mono', ui-monospace, monospace;
+        }
+
+        * { box-sizing: border-box; }
+
+        html, body { margin: 0; min-height: 100%; }
+
+        body {
+            background-color: var(--bg0);
+            background-image:
+                linear-gradient(to right, rgba(255, 255, 255, .028) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(255, 255, 255, .028) 1px, transparent 1px);
+            background-size: 28px 28px;
+            font-family: var(--font-sans);
+            color: var(--tx-hi);
+            -webkit-font-smoothing: antialiased;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 32px 16px;
+            gap: 8px;
+        }
+
+        .code {
+            font-family: var(--font-mono);
+            font-size: 12px;
+            letter-spacing: .2em;
+            text-transform: uppercase;
+            color: var(--tx-lo);
+        }
+
+        h1 {
+            margin: 0;
+            font-size: clamp(40px, 9vw, 88px);
+            font-weight: 700;
+            letter-spacing: -.03em;
+            text-transform: lowercase;
+            line-height: 1;
+        }
+
+
+        .stage {
+            margin-top: 30px;
+            width: min(860px, 94vw);
+            border: 1px solid var(--line);
+            border-radius: 12px;
+            background: var(--bg1);
+            overflow: hidden;
+        }
+
+        canvas {
+            display: block;
+            width: 100%;
+            height: auto;
+        }
+
+        .actions {
+            margin-top: 26px;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 11px 22px;
+            border: 1px solid var(--line-2);
+            border-radius: 10px;
+            background: var(--bg1);
+            color: var(--tx-mid);
+            font: 500 14px var(--font-sans);
+            cursor: pointer;
+            text-decoration: none;
+            transition: border-color 130ms ease, color 130ms ease, background-color 130ms ease, transform 130ms ease;
+        }
+
+        .btn.primary {
+            background: var(--tx-hi);
+            border-color: var(--tx-hi);
+            color: var(--bg0);
+            font-weight: 600;
+        }
+
+        .btn:hover { color: var(--tx-hi); border-color: var(--tx-lo); background: #191b1f; transform: translateY(-1px); }
+        .btn.primary:hover { background: #dfe3e7; border-color: #dfe3e7; color: var(--bg0); }
+        .btn:active { transform: translateY(0); }
+
+        .hint {
+            margin-top: 14px;
+            font-family: var(--font-mono);
+            font-size: 11px;
+            color: var(--tx-lo);
+        }
+
+        kbd {
+            padding: 1px 7px;
+            border: 1px solid var(--line-2);
+            border-radius: 5px;
+            font-family: var(--font-mono);
+            font-size: 10px;
+            color: var(--tx-mid);
+        }
+    </style>
+</head>
+
+<body>
+        <div class="code">error 404</div>
+        <h1>page not found</h1>
+
+    <div class="stage"><canvas id="game" width="880" height="240" aria-label="dino runner game"></canvas></div>
+
+    <div class="actions">
+        <button id="backBtn" class="btn primary" type="button">&larr; back to home</button>
+    </div>
+
+    <div class="hint"><kbd>space</kbd> / <kbd>&uarr;</kbd> / click to jump &nbsp;·&nbsp; <kbd>enter</kbd> restart after a crash</div>
+
+    <script>
+        (function () {
+            "use strict";
+
+            var canvas = document.getElementById("game");
+            var ctx = canvas.getContext("2d");
+
+            var W = canvas.width;
+            var H = canvas.height;
+            var GROUND = H - 20;
+
+            var COLORS = {
+                bg: "#131417",
+                ground: "#363b42",
+                dino: "#f0f2f4",
+                cactus: "#a9b0b8",
+                cloud: "#23262b",
+                text: "#747b84"
+            };
+
+            var state = null;
+
+            function freshState() {
+                return {
+                    t: 0,
+                    dist: 0,
+                    speed: 3.6,
+                    score: 0,
+                    high: Number(localStorage.getItem("cmx-404-high") || 0),
+                    over: false,
+                    started: false,
+                    dino: { x: 60, y: GROUND - 44, w: 40, h: 44, vy: 0, jump: 0 },
+                    cacti: [],
+                    clouds: [],
+                    nextCactus: 90,
+                    nextCloud: 40
+                };
+            }
+
+            function reset() {
+                state = freshState();
+            }
+
+            function jump() {
+                if (!state) reset();
+                if (state.over) { reset(); return; }
+                if (state.dino.jump <= 0) {
+                    state.dino.vy = -13.2;
+                    state.dino.jump = 1;
+                    state.started = true;
+                }
+            }
+
+            document.addEventListener("keydown", function (e) {
+                if (e.code === "Space" || e.code === "ArrowUp") {
+                    e.preventDefault();
+                    jump();
+                }
+            });
+            canvas.addEventListener("pointerdown", function () { jump(); });
+            document.getElementById("backBtn").addEventListener("click", function () {
+                if (history.length > 1) history.back();
+                else location.href = "./";
+            });
+
+            function spawnCactus(s) {
+                var cluster = 1 + Math.floor(Math.random() * 3);
+                var x = W + 20;
+                for (var i = 0; i < cluster; i++) {
+                    var h = 26 + Math.random() * 26;
+                    s.cacti.push({ x: x + i * 16, w: 12, h: h, y: GROUND - h });
+                }
+            }
+
+            function step() {
+                var s = state;
+                s.t += 1;
+
+                if (s.started && !s.over) {
+                    s.dist += s.speed;
+                    s.speed = Math.min(s.speed + 0.0008, 8.5);
+                    s.score += s.speed / 10;
+
+                    var d = s.dino;
+                    d.vy += 0.72;
+                    d.y += d.vy;
+                    if (d.y > GROUND - d.h) {
+                        d.y = GROUND - d.h;
+                        d.vy = 0;
+                        d.jump = 0;
+                    }
+
+                    s.nextCactus -= 1;
+                    if (s.nextCactus <= 0) {
+                        spawnCactus(s);
+                        s.nextCactus = 60 + Math.random() * 70 - Math.min(30, s.speed);
+                    }
+                    s.nextCloud -= 1;
+                    if (s.nextCloud <= 0) {
+                        s.clouds.push({ x: W + 10, y: 30 + Math.random() * 70, w: 34 + Math.random() * 30 });
+                        s.nextCloud = 120 + Math.random() * 160;
+                    }
+
+                    s.cacti.forEach(function (c) { c.x -= s.speed; });
+                    s.cacti = s.cacti.filter(function (c) { return c.x > -30; });
+                    s.clouds.forEach(function (c) { c.x -= s.speed * 0.25; });
+                    s.clouds = s.clouds.filter(function (c) { return c.x > -80; });
+
+                    for (var i = 0; i < s.cacti.length; i++) {
+                        var c = s.cacti[i];
+                        if (d.x + 6 < c.x + c.w && d.x + d.w - 8 > c.x && d.y + 6 < c.y + c.h && d.y + d.h > c.y) {
+                            s.over = true;
+                            if (s.score > s.high) {
+                                s.high = Math.floor(s.score);
+                                try { localStorage.setItem("cmx-404-high", String(s.high)); } catch (e) { }
+                            }
+                            break;
+                        }
+                    }
+                }
+            }
+
+            function drawDino(s) {
+                var d = s.dino;
+                ctx.fillStyle = COLORS.dino;
+                ctx.fillRect(d.x, d.y + 12, d.w - 8, d.h - 12);
+                ctx.fillRect(d.x + d.w - 22, d.y, 24, 16);
+                ctx.fillStyle = COLORS.bg;
+                ctx.fillRect(d.x + d.w - 6, d.y + 4, 4, 4);
+                ctx.fillStyle = COLORS.dino;
+                if (!s.started || s.over) {
+                    ctx.fillRect(d.x + 6, d.y + d.h, 8, 6);
+                    ctx.fillRect(d.x + 20, d.y + d.h, 8, 6);
+                } else if (Math.floor(s.t / 6) % 2 === 0) {
+                    ctx.fillRect(d.x + 6, d.y + d.h, 8, 8);
+                } else {
+                    ctx.fillRect(d.x + 20, d.y + d.h, 8, 8);
+                }
+                ctx.fillRect(d.x - 6, d.y + 14, 8, 8);
+            }
+
+            function draw() {
+                var s = state;
+                ctx.fillStyle = COLORS.bg;
+                ctx.fillRect(0, 0, W, H);
+
+                ctx.fillStyle = COLORS.ground;
+                ctx.fillRect(0, GROUND, W, 1);
+                for (var g = 0; g < W; g += 42) {
+                    var gx = (g - (s.dist % 42));
+                    ctx.fillRect(gx, GROUND + 8, 14, 1);
+                }
+
+                ctx.fillStyle = COLORS.cloud;
+                s.clouds.forEach(function (c) {
+                    ctx.fillRect(c.x, c.y, c.w, 6);
+                    ctx.fillRect(c.x + 8, c.y - 5, c.w - 16, 5);
+                });
+
+                ctx.fillStyle = COLORS.cactus;
+                s.cacti.forEach(function (c) {
+                    ctx.fillRect(c.x, c.y, c.w, c.h);
+                    ctx.fillRect(c.x - 5, c.y + c.h * 0.3, 5, 4);
+                    ctx.fillRect(c.x + c.w, c.y + c.h * 0.45, 5, 4);
+                });
+
+                drawDino(s);
+
+                ctx.fillStyle = COLORS.text;
+                ctx.font = "12px 'IBM Plex Mono', monospace";
+                ctx.textAlign = "right";
+                ctx.fillText("HI " + String(s.high).padStart(5, "0") + "  " + String(Math.floor(s.score)).padStart(5, "0"), W - 14, 24);
+
+                ctx.textAlign = "center";
+                if (!s.started && !s.over) {
+                    ctx.fillText("press space to start", W / 2, H / 2 - 6);
+                }
+                if (s.over) {
+                    ctx.fillStyle = COLORS.dino;
+                    ctx.font = "700 20px 'IBM Plex Sans', sans-serif";
+                    ctx.fillText("game over", W / 2, H / 2 - 14);
+                    ctx.fillStyle = COLORS.text;
+                    ctx.font = "12px 'IBM Plex Mono', monospace";
+                    ctx.fillText("space / click to retry", W / 2, H / 2 + 10);
+                }
+            }
+
+            function loop() {
+                if (!state) reset();
+                step();
+                draw();
+                requestAnimationFrame(loop);
+            }
+
+            reset();
+            loop();
+        })();
+    </script>
+</body>
+
+</html>

