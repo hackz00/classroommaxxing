@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://raw.githubusercontent.com/hackz00/classroommaxxing/main/favicon.png" width="60" />
+  <img src="https://raw.githubusercontent.com/hackz00/classroommaxxing/main/archive/favicon.png" width="60" />
 </p>
 
 <p align="center">
