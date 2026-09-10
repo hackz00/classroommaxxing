@@ -7,7 +7,8 @@
 </p>
 
 <p align="center">
-  really tuff simple game website, with no ads! (mostly) that supports recently played games and alot of games from gnmath and custom ones
+  really nice looking simple game website, with no ads! (mostly) that has the ability to favorite games, see recent games, and more!
+  <u>over 1400 games from gnmath, luminsdk, and more</u>
 </p>
 
 <p align="center">
