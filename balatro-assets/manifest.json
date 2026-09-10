@@ -1,0 +1,83 @@
+{
+  "_integrity": {
+    "love.min.js.part-000.bin": {
+      "size": 6863050,
+      "sha256": "11d03f311daa9a937da9156ce46da6ab894ddf15de7cb31fd8341f3a6e79fd8e"
+    },
+    "module.js.part-000.bin": {
+      "size": 10485760,
+      "sha256": "482506e7faddd3be6685ea458a0a7029f9d8923ae88bcf03a0ede141b6f72c7d"
+    },
+    "module.js.part-001.bin": {
+      "size": 10485760,
+      "sha256": "6de08f59ee8c4d2e44a25757f4f5703d32c0c28c7febd491ebceb77cf2278239"
+    },
+    "module.js.part-002.bin": {
+      "size": 10485760,
+      "sha256": "7a5b0b68a444bd64f4743b9292aa77d79e6d2ffe5176687ee55fc006e46e4768"
+    },
+    "module.js.part-003.bin": {
+      "size": 10485760,
+      "sha256": "7b64b862d83c930437ee09234d0f49fa63a734ed392f83c640293c8314a208e8"
+    },
+    "module.js.part-004.bin": {
+      "size": 10485760,
+      "sha256": "ce3a79512d905fe42c448a6707444bbf24a41911149db022a39cb806cb7c74c3"
+    },
+    "module.js.part-005.bin": {
+      "size": 10485760,
+      "sha256": "3a8de7551d181a0401c0c1b9ce03561a161d4160c95e64892dbe9a427c613951"
+    },
+    "module.js.part-006.bin": {
+      "size": 10485760,
+      "sha256": "ef573fa4f7f86f26db87d97d743a44a0ef08f6b5f7fda7fb934f9120f97477e1"
+    },
+    "module.js.part-007.bin": {
+      "size": 10485760,
+      "sha256": "714f1c770aab797b3ee50536622d39b009886625c875bb2a86433430f676c224"
+    },
+    "module.js.part-008.bin": {
+      "size": 10485760,
+      "sha256": "aae1167068bdd15082dba21fd62d88a1c1ea95d34ed5eda8744ca184c7033450"
+    },
+    "module.js.part-009.bin": {
+      "size": 10485760,
+      "sha256": "80426a505da747c28d1f1a0297d02cfbb5895a5016a1e8d9f3b78f225031f10d"
+    },
+    "module.js.part-010.bin": {
+      "size": 10485760,
+      "sha256": "2b8c4048acbf22f39aea1aab56a8cbe077dba98aef1e7afe1e784c6d834195b8"
+    },
+    "module.js.part-011.bin": {
+      "size": 3403548,
+      "sha256": "6cb44b518cee808e915dce35cd9f993651f63c6cf12acf834f49037bbda8c899"
+    }
+  },
+  "_assets": {
+    "love.min.js": {
+      "size": 6863050,
+      "sha256": "11d03f311daa9a937da9156ce46da6ab894ddf15de7cb31fd8341f3a6e79fd8e"
+    },
+    "module.js": {
+      "size": 118746908,
+      "sha256": "3ec11aa206bf6fca8b04843d63f4013c6c4798e34aa86383970828b284a07994"
+    }
+  },
+  "love.min.js": [
+    "love.min.js.part-000.bin"
+  ],
+  "module.js": [
+    "module.js.part-000.bin",
+    "module.js.part-001.bin",
+    "module.js.part-002.bin",
+    "module.js.part-003.bin",
+    "module.js.part-004.bin",
+    "module.js.part-005.bin",
+    "module.js.part-006.bin",
+    "module.js.part-007.bin",
+    "module.js.part-008.bin",
+    "module.js.part-009.bin",
+    "module.js.part-010.bin",
+    "module.js.part-011.bin"
+  ]
+}
