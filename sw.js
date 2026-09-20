@@ -1,4 +1,3 @@
-/* Build replaces the revision; only this worker's scoped shell caches are managed. */
 const REVISION = '28b43e2216a55216ce6092eba0c31ac26ff71e6948757226d9dd5cd5f0ae7035';
 const SHELL_HASH = 'e65323fa0edd8279decc9aea30fcf123c826d45537246caf55871cd61626fdb4';
 const ROOT = new URL('./', self.location.href);
